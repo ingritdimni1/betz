@@ -26,7 +26,7 @@ namespace VanguardLTE
 
         public function statistic()
         {
-            return $this->belongsTo('VanguardLTE\Statistic');
+            return $this->belongsTo(\VanguardLTE\Statistic::class);
         }
 
         public static function boot()

@@ -21,7 +21,7 @@ namespace VanguardLTE
 
         public function user()
         {
-            return $this->belongsTo('VanguardLTE\User');
+            return $this->belongsTo(\VanguardLTE\User::class);
         }
     }
 

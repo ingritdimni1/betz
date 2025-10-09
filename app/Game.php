@@ -769,7 +769,7 @@ namespace VanguardLTE
 
         public function shop()
         {
-            return $this->belongsTo('VanguardLTE\Shop', 'shop_id');
+            return $this->belongsTo(\VanguardLTE\Shop::class, 'shop_id');
         }
 
         public function jpg()
@@ -779,34 +779,34 @@ namespace VanguardLTE
 
         public function jackpot()
         {
-            return $this->hasOne('VanguardLTE\JPG', 'id', 'jpg_id');
+            return $this->hasOne(\VanguardLTE\JPG::class, 'id', 'jpg_id');
         }
 
         public function game_bank()
         {
-            return $this->hasOne('VanguardLTE\GameBank', 'shop_id', 'shop_id');
+            return $this->hasOne(\VanguardLTE\GameBank::class, 'shop_id', 'shop_id');
         }
 
         public function fish_bank()
         {
-            return $this->hasOne('VanguardLTE\FishBank', 'shop_id', 'shop_id');
+            return $this->hasOne(\VanguardLTE\FishBank::class, 'shop_id', 'shop_id');
         }
 
         public function statistics()
         {
             $shop_id = (\Auth::check() ? \Auth::user()->shop_id : 0);
 
-            return $this->hasMany('VanguardLTE\StatGame', 'game', 'name')->where('shop_id', $shop_id)->orderBy('date_time', 'DESC');
+            return $this->hasMany(\VanguardLTE\StatGame::class, 'game', 'name')->where('shop_id', $shop_id)->orderBy('date_time', 'DESC');
         }
 
         public function categories()
         {
-            return $this->hasMany('VanguardLTE\GameCategory', 'category_id');
+            return $this->hasMany(\VanguardLTE\GameCategory::class, 'category_id');
         }
 
         public function tournaments()
         {
-            return $this->hasMany('VanguardLTE\TournamentGame', 'game_id', 'id');
+            return $this->hasMany(\VanguardLTE\TournamentGame::class, 'game_id', 'id');
         }
 
         public function name_ico()

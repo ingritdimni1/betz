@@ -20,12 +20,12 @@ namespace VanguardLTE
 
         public function tournament()
         {
-            return $this->belongsTo('VanguardLTE\Tournament');
+            return $this->belongsTo(\VanguardLTE\Tournament::class);
         }
 
         public function game()
         {
-            return $this->belongsTo('VanguardLTE\Game');
+            return $this->belongsTo(\VanguardLTE\Game::class);
         }
     }
 

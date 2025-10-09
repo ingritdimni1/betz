@@ -25,17 +25,17 @@ namespace VanguardLTE
 
         public function credit()
         {
-            return $this->hasOne('VanguardLTE\Credit', 'id', 'credit_id');
+            return $this->hasOne(\VanguardLTE\Credit::class, 'id', 'credit_id');
         }
 
         public function user()
         {
-            return $this->hasOne('VanguardLTE\User', 'id', 'user_id');
+            return $this->hasOne(\VanguardLTE\User::class, 'id', 'user_id');
         }
 
         public function shop()
         {
-            return $this->hasOne('VanguardLTE\Shop', 'id', 'shop_id');
+            return $this->hasOne(\VanguardLTE\Shop::class, 'id', 'shop_id');
         }
     }
 

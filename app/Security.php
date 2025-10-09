@@ -34,17 +34,17 @@ namespace VanguardLTE
 
         public function shop()
         {
-            return $this->belongsTo('VanguardLTE\Shop');
+            return $this->belongsTo(\VanguardLTE\Shop::class);
         }
 
         public function game()
         {
-            return $this->belongsTo('VanguardLTE\Game', 'item_id', 'id');
+            return $this->belongsTo(\VanguardLTE\Game::class, 'item_id', 'id');
         }
 
         public function user()
         {
-            return $this->belongsTo('VanguardLTE\User', 'item_id', 'id');
+            return $this->belongsTo(\VanguardLTE\User::class, 'item_id', 'id');
         }
     }
 

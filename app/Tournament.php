@@ -164,32 +164,32 @@ namespace VanguardLTE
 
         public function shop()
         {
-            return $this->belongsTo('VanguardLTE\Shop');
+            return $this->belongsTo(\VanguardLTE\Shop::class);
         }
 
         public function prizes()
         {
-            return $this->hasMany('VanguardLTE\TournamentPrize');
+            return $this->hasMany(\VanguardLTE\TournamentPrize::class);
         }
 
         public function categories()
         {
-            return $this->hasMany('VanguardLTE\TournamentCategory');
+            return $this->hasMany(\VanguardLTE\TournamentCategory::class);
         }
 
         public function games()
         {
-            return $this->hasMany('VanguardLTE\TournamentGame');
+            return $this->hasMany(\VanguardLTE\TournamentGame::class);
         }
 
         public function users()
         {
-            return $this->hasMany('VanguardLTE\TournamentBot', 'tournament_id', 'id');
+            return $this->hasMany(\VanguardLTE\TournamentBot::class, 'tournament_id', 'id');
         }
 
         public function stats()
         {
-            return $this->hasMany('VanguardLTE\TournamentStat');
+            return $this->hasMany(\VanguardLTE\TournamentStat::class);
         }
 
         public function is_waiting()

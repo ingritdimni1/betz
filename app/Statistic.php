@@ -34,22 +34,22 @@ namespace VanguardLTE
 
         public function user()
         {
-            return $this->belongsTo('VanguardLTE\User', 'user_id');
+            return $this->belongsTo(\VanguardLTE\User::class, 'user_id');
         }
 
         public function payeer()
         {
-            return $this->hasOne('VanguardLTE\User', 'id', 'payeer_id');
+            return $this->hasOne(\VanguardLTE\User::class, 'id', 'payeer_id');
         }
 
         public function shop()
         {
-            return $this->hasOne('VanguardLTE\Shop', 'id', 'shop_id');
+            return $this->hasOne(\VanguardLTE\Shop::class, 'id', 'shop_id');
         }
 
         public function add()
         {
-            return $this->hasOne('VanguardLTE\StatisticAdd');
+            return $this->hasOne(\VanguardLTE\StatisticAdd::class);
         }
 
         public static function boot()

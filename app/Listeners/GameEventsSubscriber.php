@@ -164,7 +164,7 @@ class GameEventsSubscriber
      */
     public function subscribe($events)
     {
-        $class = 'VanguardLTE\Listeners\GameEventsSubscriber';
+        $class = \VanguardLTE\Listeners\GameEventsSubscriber::class;
 
         $events->listen(NewGame::class, "{$class}@onNewGame");
         $events->listen(GameEdited::class, "{$class}@onGameEdited");

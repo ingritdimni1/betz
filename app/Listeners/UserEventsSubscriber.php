@@ -150,7 +150,7 @@ class UserEventsSubscriber
      */
     public function subscribe($events)
     {
-        $class = 'VanguardLTE\Listeners\UserEventsSubscriber';
+        $class = \VanguardLTE\Listeners\UserEventsSubscriber::class;
 
         $events->listen(LoggedIn::class, "{$class}@onLogin");
         $events->listen(LoggedOut::class, "{$class}@onLogout");

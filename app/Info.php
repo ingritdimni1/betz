@@ -36,7 +36,7 @@ namespace VanguardLTE
 
         public function user()
         {
-            return $this->hasOne('VanguardLTE\User', 'id', 'user_id');
+            return $this->hasOne(\VanguardLTE\User::class, 'id', 'user_id');
         }
     }
 

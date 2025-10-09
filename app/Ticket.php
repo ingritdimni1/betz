@@ -33,17 +33,17 @@ namespace VanguardLTE
 
         public function answers()
         {
-            return $this->hasMany('VanguardLTE\TicketAnswer');
+            return $this->hasMany(\VanguardLTE\TicketAnswer::class);
         }
 
         public function user()
         {
-            return $this->belongsTo('VanguardLTE\User');
+            return $this->belongsTo(\VanguardLTE\User::class);
         }
 
         public function shop()
         {
-            return $this->belongsTo('VanguardLTE\Shop');
+            return $this->belongsTo(\VanguardLTE\Shop::class);
         }
     }
 

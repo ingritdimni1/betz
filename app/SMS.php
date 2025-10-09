@@ -24,12 +24,12 @@ namespace VanguardLTE
 
         public function user()
         {
-            return $this->hasOne('VanguardLTE\User', 'id', 'user_id');
+            return $this->hasOne(\VanguardLTE\User::class, 'id', 'user_id');
         }
 
         public function new_user()
         {
-            return $this->hasOne('VanguardLTE\User', 'id', 'new_user_id');
+            return $this->hasOne(\VanguardLTE\User::class, 'id', 'new_user_id');
         }
     }
 

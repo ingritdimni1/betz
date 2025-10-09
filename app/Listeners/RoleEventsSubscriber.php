@@ -62,7 +62,7 @@ class RoleEventsSubscriber
      */
     public function subscribe($events)
     {
-        $class = 'VanguardLTE\Listeners\RoleEventsSubscriber';
+        $class = \VanguardLTE\Listeners\RoleEventsSubscriber::class;
 
         $events->listen(Created::class, "{$class}@onCreate");
         $events->listen(Updated::class, "{$class}@onUpdate");

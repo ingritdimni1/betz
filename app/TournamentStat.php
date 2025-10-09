@@ -27,22 +27,22 @@ namespace VanguardLTE
 
         public function tournament()
         {
-            return $this->belongsTo('VanguardLTE\Tournament');
+            return $this->belongsTo(\VanguardLTE\Tournament::class);
         }
 
         public function user()
         {
-            return $this->belongsTo('VanguardLTE\User');
+            return $this->belongsTo(\VanguardLTE\User::class);
         }
 
         public function bot()
         {
-            return $this->belongsTo('VanguardLTE\TournamentBot', 'user_id', 'id');
+            return $this->belongsTo(\VanguardLTE\TournamentBot::class, 'user_id', 'id');
         }
 
         public function prize()
         {
-            return $this->belongsTo('VanguardLTE\TournamentPrize');
+            return $this->belongsTo(\VanguardLTE\TournamentPrize::class);
         }
 
         public function getUsername()

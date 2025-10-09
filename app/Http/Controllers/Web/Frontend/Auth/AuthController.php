@@ -310,7 +310,7 @@ namespace VanguardLTE\Http\Controllers\Web\Frontend\Auth
 
         public function confirmEmail($token)
         {
-            if ($user = \VanguardLTE\User::withoutGlobalScope('VanguardLTE\Scopes\DemoAgent')->where('confirmation_token', $token)->first()) {
+            if ($user = \VanguardLTE\User::withoutGlobalScope(\VanguardLTE\Scopes\DemoAgent::class)->where('confirmation_token', $token)->first()) {
                 $user->update([
                     'status' => \VanguardLTE\Support\Enum\UserStatus::ACTIVE,
                     'confirmation_token' => null,

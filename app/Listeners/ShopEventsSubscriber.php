@@ -174,7 +174,7 @@ class ShopEventsSubscriber
      */
     public function subscribe($events)
     {
-        $class = 'VanguardLTE\Listeners\ShopEventsSubscriber';
+        $class = \VanguardLTE\Listeners\ShopEventsSubscriber::class;
 
         $events->listen(ShopEdited::class, "{$class}@onShopEdit");
     }

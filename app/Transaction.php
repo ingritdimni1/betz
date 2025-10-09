@@ -24,17 +24,17 @@ namespace VanguardLTE
 
         public function admin()
         {
-            return $this->hasOne('VanguardLTE\User', 'id', 'payeer_id');
+            return $this->hasOne(\VanguardLTE\User::class, 'id', 'payeer_id');
         }
 
         public function user()
         {
-            return $this->hasOne('VanguardLTE\User', 'id', 'user_id');
+            return $this->hasOne(\VanguardLTE\User::class, 'id', 'user_id');
         }
 
         public function shop()
         {
-            return $this->belongsTo('VanguardLTE\Shop');
+            return $this->belongsTo(\VanguardLTE\Shop::class);
         }
     }
 

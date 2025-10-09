@@ -25,7 +25,7 @@ namespace VanguardLTE
 
         public function game()
         {
-            return $this->hasOne('VanguardLTE\Game', 'id', 'game_id');
+            return $this->hasOne(\VanguardLTE\Game::class, 'id', 'game_id');
         }
     }
 

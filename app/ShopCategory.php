@@ -20,7 +20,7 @@ namespace VanguardLTE
 
         public function category()
         {
-            return $this->belongsTo('VanguardLTE\Category');
+            return $this->belongsTo(\VanguardLTE\Category::class);
         }
     }
 

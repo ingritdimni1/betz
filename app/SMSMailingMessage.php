@@ -22,12 +22,12 @@ namespace VanguardLTE
 
         public function user()
         {
-            return $this->belongsTo('VanguardLTE\User');
+            return $this->belongsTo(\VanguardLTE\User::class);
         }
 
         public function sms_mailing()
         {
-            return $this->belongsTo('VanguardLTE\SMSMailing');
+            return $this->belongsTo(\VanguardLTE\SMSMailing::class);
         }
     }
 

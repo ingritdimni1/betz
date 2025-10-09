@@ -28,12 +28,12 @@ namespace VanguardLTE
 
         public function user()
         {
-            return $this->belongsTo('VanguardLTE\User', 'user_id');
+            return $this->belongsTo(\VanguardLTE\User::class, 'user_id');
         }
 
         public function referral()
         {
-            return $this->belongsTo('VanguardLTE\User', 'referral_id');
+            return $this->belongsTo(\VanguardLTE\User::class, 'referral_id');
         }
     }
 

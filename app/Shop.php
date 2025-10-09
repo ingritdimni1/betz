@@ -215,32 +215,32 @@ namespace VanguardLTE
 
         public function categories()
         {
-            return $this->hasMany('VanguardLTE\ShopCategory', 'shop_id');
+            return $this->hasMany(\VanguardLTE\ShopCategory::class, 'shop_id');
         }
 
         public function users()
         {
-            return $this->hasMany('VanguardLTE\ShopUser');
+            return $this->hasMany(\VanguardLTE\ShopUser::class);
         }
 
         public function creator()
         {
-            return $this->hasOne('VanguardLTE\User', 'id', 'user_id');
+            return $this->hasOne(\VanguardLTE\User::class, 'id', 'user_id');
         }
 
         public function countries()
         {
-            return $this->hasMany('VanguardLTE\ShopCountry');
+            return $this->hasMany(\VanguardLTE\ShopCountry::class);
         }
 
         public function oss()
         {
-            return $this->hasMany('VanguardLTE\ShopOS');
+            return $this->hasMany(\VanguardLTE\ShopOS::class);
         }
 
         public function devices()
         {
-            return $this->hasMany('VanguardLTE\ShopDevice');
+            return $this->hasMany(\VanguardLTE\ShopDevice::class);
         }
 
         public function titles()

@@ -20,7 +20,7 @@ namespace VanguardLTE
 
         public function shop()
         {
-            return $this->belongsTo('VanguardLTE\Shop', 'shop_id');
+            return $this->belongsTo(\VanguardLTE\Shop::class, 'shop_id');
         }
     }
 

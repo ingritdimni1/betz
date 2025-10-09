@@ -95,7 +95,7 @@ class JackpotEventsSubscriber
      */
     public function subscribe($events)
     {
-        $class = 'VanguardLTE\Listeners\JackpotEventsSubscriber';
+        $class = \VanguardLTE\Listeners\JackpotEventsSubscriber::class;
 
         $events->listen(NewJackpot::class, "{$class}@onNewJackpot");
         $events->listen(JackpotEdited::class, "{$class}@onJackpotEdited");

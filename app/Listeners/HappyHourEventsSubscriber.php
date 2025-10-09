@@ -92,7 +92,7 @@ class HappyHourEventsSubscriber
      */
     public function subscribe($events)
     {
-        $class = 'VanguardLTE\Listeners\HappyHourEventsSubscriber';
+        $class = \VanguardLTE\Listeners\HappyHourEventsSubscriber::class;
 
         $events->listen(NewHappyHour::class, "{$class}@onNewHappyHour");
         $events->listen(HappyHourEdited::class, "{$class}@onHappyHourEdited");

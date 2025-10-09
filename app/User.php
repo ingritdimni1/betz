@@ -8,7 +8,7 @@ namespace VanguardLTE
             \jeremykenedy\LaravelRoles\Traits\HasRoleAndPermission,
             \Laracasts\Presenter\PresentableTrait;
 
-        protected $presenter = 'VanguardLTE\Presenters\UserPresenter';
+        protected $presenter = \VanguardLTE\Presenters\UserPresenter::class;
 
         protected $table = 'users';
 
@@ -399,27 +399,27 @@ namespace VanguardLTE
 
         public function activities()
         {
-            return $this->hasMany('VanguardLTE\Services\Logging\UserActivity\Activity', 'user_id');
+            return $this->hasMany(\VanguardLTE\Services\Logging\UserActivity\Activity::class, 'user_id');
         }
 
         public function referral()
         {
-            return $this->belongsTo('VanguardLTE\User', 'parent_id');
+            return $this->belongsTo(\VanguardLTE\User::class, 'parent_id');
         }
 
         public function rel_shops()
         {
-            return $this->hasMany('VanguardLTE\ShopUser', 'user_id');
+            return $this->hasMany(\VanguardLTE\ShopUser::class, 'user_id');
         }
 
         public function sessions()
         {
-            return $this->hasMany('VanguardLTE\Session');
+            return $this->hasMany(\VanguardLTE\Session::class);
         }
 
         public function invites()
         {
-            return $this->hasMany('VanguardLTE\User', 'inviter_id', 'id');
+            return $this->hasMany(\VanguardLTE\User::class, 'inviter_id', 'id');
         }
 
         public function rewards()
@@ -567,7 +567,7 @@ namespace VanguardLTE
 
         public function shop()
         {
-            return $this->belongsTo('VanguardLTE\Shop', 'shop_id');
+            return $this->belongsTo(\VanguardLTE\Shop::class, 'shop_id');
         }
 
         public function getJWTIdentifier()
@@ -577,7 +577,7 @@ namespace VanguardLTE
 
         public function getJWTCustomClaims()
         {
-            $_obf_0D2B05231A38042E03250E09081D011D213D012A2B0B01 = app('VanguardLTE\Services\Auth\Api\TokenFactory')->forUser($this);
+            $_obf_0D2B05231A38042E03250E09081D011D213D012A2B0B01 = app(\VanguardLTE\Services\Auth\Api\TokenFactory::class)->forUser($this);
 
             return ['jti' => $_obf_0D2B05231A38042E03250E09081D011D213D012A2B0B01->id];
         }

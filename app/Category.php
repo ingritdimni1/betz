@@ -32,17 +32,17 @@ namespace VanguardLTE
         {
             $shop_id = (\Auth::check() ? \Auth::user()->shop_id : 0);
 
-            return $this->hasMany('VanguardLTE\Category', 'parent')->orderBy('position', 'ASC');
+            return $this->hasMany(\VanguardLTE\Category::class, 'parent')->orderBy('position', 'ASC');
         }
 
         public function parentOne()
         {
-            return $this->hasOne('VanguardLTE\Category', 'id', 'parent');
+            return $this->hasOne(\VanguardLTE\Category::class, 'id', 'parent');
         }
 
         public function games()
         {
-            return $this->hasMany('VanguardLTE\GameCategory', 'category_id');
+            return $this->hasMany(\VanguardLTE\GameCategory::class, 'category_id');
         }
     }
 

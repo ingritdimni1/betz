@@ -82,12 +82,12 @@ namespace VanguardLTE
 
         public function shop()
         {
-            return $this->belongsTo('VanguardLTE\Shop', 'shop_id');
+            return $this->belongsTo(\VanguardLTE\Shop::class, 'shop_id');
         }
 
         public function user()
         {
-            return $this->belongsTo('VanguardLTE\User', 'user_id');
+            return $this->belongsTo(\VanguardLTE\User::class, 'user_id');
         }
 
         public function get_jpg()

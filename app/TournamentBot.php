@@ -20,7 +20,7 @@ namespace VanguardLTE
 
         public function tournament()
         {
-            return $this->belongsTo('VanguardLTE\Tournament');
+            return $this->belongsTo(\VanguardLTE\Tournament::class);
         }
     }
 

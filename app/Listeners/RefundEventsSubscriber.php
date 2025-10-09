@@ -136,7 +136,7 @@ class RefundEventsSubscriber
      */
     public function subscribe($events)
     {
-        $class = 'VanguardLTE\Listeners\RefundEventsSubscriber';
+        $class = \VanguardLTE\Listeners\RefundEventsSubscriber::class;
 
         $events->listen(NewRefund::class, "{$class}@onNewRefund");
         $events->listen(RefundEdited::class, "{$class}@onRefundEdited");
