@@ -16,8 +16,8 @@ interface RoleRepository
     /**
      * Lists all system roles into $key => $column value pairs.
      *
-     * @param string $column
-     * @param string $key
+     * @param  string  $column
+     * @param  string  $key
      * @return mixed
      */
     public function lists($column = 'name', $key = 'id');
@@ -32,7 +32,7 @@ interface RoleRepository
     /**
      * Find system role by id.
      *
-     * @param $id Role Id
+     * @param  $id  Role Id
      * @return Role|null
      */
     public function find($id);
@@ -40,7 +40,6 @@ interface RoleRepository
     /**
      * Find role by name:
      *
-     * @param $name
      * @return mixed
      */
     public function findByName($name);
@@ -48,7 +47,6 @@ interface RoleRepository
     /**
      * Create new system role.
      *
-     * @param array $data
      * @return Role
      */
     public function create(array $data);
@@ -56,8 +54,7 @@ interface RoleRepository
     /**
      * Update specified role.
      *
-     * @param $id Role Id
-     * @param array $data
+     * @param  $id  Role Id
      * @return Role
      */
     public function update($id, array $data);
@@ -65,7 +62,7 @@ interface RoleRepository
     /**
      * Remove role from repository.
      *
-     * @param $id Role Id
+     * @param  $id  Role Id
      * @return bool
      */
     public function delete($id);
@@ -73,8 +70,6 @@ interface RoleRepository
     /**
      * Update the permissions for given role.
      *
-     * @param $roleId
-     * @param array $permissions
      * @return mixed
      */
     public function updatePermissions($roleId, array $permissions);

@@ -3,9 +3,9 @@
 namespace VanguardLTE\Listeners;
 
 use VanguardLTE\Events\Role\Created;
+use VanguardLTE\Events\Role\Deleted;
 use VanguardLTE\Events\Role\PermissionsUpdated;
 use VanguardLTE\Events\Role\Updated;
-use VanguardLTE\Events\Role\Deleted;
 use VanguardLTE\Services\Logging\UserActivity\Logger;
 
 class RoleEventsSubscriber

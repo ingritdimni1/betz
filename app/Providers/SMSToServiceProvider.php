@@ -6,8 +6,8 @@ use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Intergo\SmsTo\Http\Client as SmsToClient;
 
-class SMSToServiceProvider extends BaseServiceProvider {
-
+class SMSToServiceProvider extends BaseServiceProvider
+{
     /**
      * Bootstrap the application services.
      *
@@ -16,7 +16,7 @@ class SMSToServiceProvider extends BaseServiceProvider {
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../../config/smsto.php' => config_path('smsto.php'),
+            __DIR__.'/../../config/smsto.php' => config_path('smsto.php'),
         ], 'config');
 
         $this->publishes([
@@ -24,7 +24,7 @@ class SMSToServiceProvider extends BaseServiceProvider {
         ], 'views');
 
         $this->mergeConfigFrom(
-            __DIR__ . '/../../config/smsto.php', 'smsto'
+            __DIR__.'/../../config/smsto.php', 'smsto'
         );
 
         $this->loadViewsFrom(__DIR__.'/../../views', 'smsto');
@@ -39,7 +39,7 @@ class SMSToServiceProvider extends BaseServiceProvider {
     {
 
         // If PHP SDK is ready
-        $this->app->bind('laravel-smsto', function() {
+        $this->app->bind('laravel-smsto', function () {
             return new SmsToClient(
                 settings('smsto_client_id'),
                 settings('smsto_client_secret'),
@@ -50,13 +50,12 @@ class SMSToServiceProvider extends BaseServiceProvider {
         });
     }
 
-
     public function getAccessToken()
     {
         $accessToken = null;
 
         // Check if we have accessToken saved already
-        if ( ! file_exists(storage_path('smsto-accessToken'))) {
+        if (! file_exists(storage_path('smsto-accessToken'))) {
             $client = new SmsToClient(
                 settings('smsto_client_id'),
                 settings('smsto_client_secret'),

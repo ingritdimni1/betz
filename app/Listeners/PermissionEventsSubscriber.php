@@ -2,7 +2,6 @@
 
 namespace VanguardLTE\Listeners;
 
-use VanguardLTE\Activity;
 use VanguardLTE\Events\Permission\Created;
 use VanguardLTE\Events\Permission\Deleted;
 use VanguardLTE\Events\Permission\Updated;

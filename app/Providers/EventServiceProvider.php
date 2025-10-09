@@ -2,21 +2,20 @@
 
 namespace VanguardLTE\Providers;
 
+use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use VanguardLTE\Events\User\Banned;
 use VanguardLTE\Events\User\LoggedIn;
 use VanguardLTE\Events\User\Registered;
-use VanguardLTE\Listeners\Users\InvalidateSessionsAndTokens;
-use VanguardLTE\Listeners\Login\UpdateLastLoginTimestamp;
-use VanguardLTE\Listeners\Registration\SendConfirmationEmail;
-use VanguardLTE\Listeners\PermissionEventsSubscriber;
-use VanguardLTE\Listeners\RoleEventsSubscriber;
-use VanguardLTE\Listeners\UserEventsSubscriber;
-use VanguardLTE\Listeners\ShopEventsSubscriber;
-use VanguardLTE\Listeners\JackpotEventsSubscriber;
-use VanguardLTE\Listeners\HappyHourEventsSubscriber;
 use VanguardLTE\Listeners\GameEventsSubscriber;
-
-use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use VanguardLTE\Listeners\HappyHourEventsSubscriber;
+use VanguardLTE\Listeners\JackpotEventsSubscriber;
+use VanguardLTE\Listeners\Login\UpdateLastLoginTimestamp;
+use VanguardLTE\Listeners\PermissionEventsSubscriber;
+use VanguardLTE\Listeners\Registration\SendConfirmationEmail;
+use VanguardLTE\Listeners\RoleEventsSubscriber;
+use VanguardLTE\Listeners\ShopEventsSubscriber;
+use VanguardLTE\Listeners\UserEventsSubscriber;
+use VanguardLTE\Listeners\Users\InvalidateSessionsAndTokens;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -30,10 +29,10 @@ class EventServiceProvider extends ServiceProvider
             SendConfirmationEmail::class,
         ],
         LoggedIn::class => [
-            UpdateLastLoginTimestamp::class
+            UpdateLastLoginTimestamp::class,
         ],
         Banned::class => [
-            InvalidateSessionsAndTokens::class
+            InvalidateSessionsAndTokens::class,
         ],
 
     ];
@@ -50,7 +49,7 @@ class EventServiceProvider extends ServiceProvider
         ShopEventsSubscriber::class,
         JackpotEventsSubscriber::class,
         GameEventsSubscriber::class,
-        HappyHourEventsSubscriber::class
+        HappyHourEventsSubscriber::class,
     ];
 
     /**

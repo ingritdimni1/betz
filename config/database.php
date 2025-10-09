@@ -34,15 +34,15 @@ return [
     'connections' => [
 
         'sqlite' => [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => env('DB_DATABASE', database_path('database.sqlite')),
-            'prefix'   => env('DB_PREFIX', ''),
+            'prefix' => env('DB_PREFIX', ''),
         ],
 
         'sqlite_memory' => [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => env('DB_PREFIX', ''),
+            'prefix' => env('DB_PREFIX', ''),
         ],
 
         'mysql' => [
@@ -125,8 +125,8 @@ return [
         'cluster' => false,
 
         'default' => [
-            'host'     => '127.0.0.1',
-            'port'     => 6379,
+            'host' => '127.0.0.1',
+            'port' => 6379,
             'database' => 3,
         ],
 

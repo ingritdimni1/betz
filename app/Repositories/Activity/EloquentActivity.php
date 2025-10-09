@@ -2,9 +2,9 @@
 
 namespace VanguardLTE\Repositories\Activity;
 
-use VanguardLTE\Services\Logging\UserActivity\Activity;
 use Carbon\Carbon;
 use DB;
+use VanguardLTE\Services\Logging\UserActivity\Activity;
 
 class EloquentActivity implements ActivityRepository
 {
@@ -43,14 +43,11 @@ class EloquentActivity implements ActivityRepository
     public function paginateActivities($perPage = 20, $search = null, $userids = [])
     {
         $query = Activity::with('user');
-		
+
         return $this->paginateAndFilterResults($perPage, $search, $query, $userids);
     }
 
     /**
-     * @param $perPage
-     * @param $search
-     * @param $query
      * @return mixed
      */
     private function paginateAndFilterResults($perPage, $search, $query, $userids = [])
@@ -58,13 +55,13 @@ class EloquentActivity implements ActivityRepository
         if ($search) {
             $query->where('description', 'LIKE', "%$search%");
         }
-				
-		if( count($userids) ){
-			$query->whereIn('user_id', $userids);
-		} else{
-			$query->where('user_id', 0);
-		}
-		
+
+        if (count($userids)) {
+            $query->whereIn('user_id', $userids);
+        } else {
+            $query->where('user_id', 0);
+        }
+
         $result = $query->orderBy('created_at', 'DESC')
             ->paginate($perPage);
 
@@ -81,8 +78,8 @@ class EloquentActivity implements ActivityRepository
     public function userActivityForPeriod($userId, Carbon $from, Carbon $to)
     {
         $result = Activity::select([
-            DB::raw("DATE(created_at) as day"),
-            DB::raw('count(id) as count')
+            DB::raw('DATE(created_at) as day'),
+            DB::raw('count(id) as count'),
         ])
             ->where('user_id', $userId)
             ->whereBetween('created_at', [$from, $to])

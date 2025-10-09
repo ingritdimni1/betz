@@ -25,5 +25,5 @@ return [
     'enabled_2fa_for' => 'Zwei-Faktor Authentifizierung für Benutzer :name wurde aktiviert.',
     'disabled_2fa_for' => 'Zwei-Faktor Authentifizierung für Benutzer :name wurde deaktiviert.',
     'requested_password_reset' => 'Mail zum Zurücksetzen des Passworts wurde angefordert.',
-    'reseted_password' => 'Das Passwort wurde mit Hilfe der Option "Passwort vergessen" zurückgesetzt.'
+    'reseted_password' => 'Das Passwort wurde mit Hilfe der Option "Passwort vergessen" zurückgesetzt.',
 ];

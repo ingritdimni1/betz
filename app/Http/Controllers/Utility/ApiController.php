@@ -2,13 +2,12 @@
 
 namespace VanguardLTE\Http\Controllers\Utility;
 
-use Illuminate\Http\Request;
 use VanguardLTE\Http\Controllers\Controller;
 use VanguardLTE\Model\CrudModel;
 
 class ApiController extends Controller
 {
-    static function createNewApiKey()
+    public static function createNewApiKey()
     {
         $payload = [
             'keygen' => hpRandStr(25),
@@ -16,18 +15,19 @@ class ApiController extends Controller
             'status' => 1,
         ];
         $api_key_id = CrudModel::createNewRecord('apis', $payload);
+
         return $api_key_id;
     }
 
-    static function generateNewApiKey($where)
+    public static function generateNewApiKey($where)
     {
         $payload = [
-            'keygen' => hpRandStr(25)
+            'keygen' => hpRandStr(25),
         ];
         CrudModel::updateRecord('apis', $payload, $where);
     }
 
-    static function deleteApiKey($where)
+    public static function deleteApiKey($where)
     {
         CrudModel::deleteRecord('apis', $where);
     }

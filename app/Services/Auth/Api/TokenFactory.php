@@ -3,9 +3,9 @@
 namespace VanguardLTE\Services\Auth\Api;
 
 use Carbon\Carbon;
+use Illuminate\Contracts\Config\Repository as ConfigContract;
 use Illuminate\Http\Request;
 use VanguardLTE\User;
-use Illuminate\Contracts\Config\Repository as ConfigContract;
 
 class TokenFactory
 {
@@ -21,8 +21,6 @@ class TokenFactory
 
     /**
      * TokenFactory constructor.
-     * @param Request $request
-     * @param ConfigContract $config
      */
     public function __construct(Request $request, ConfigContract $config)
     {
@@ -32,7 +30,7 @@ class TokenFactory
 
     /**
      * Create new token for specified user.
-     * @param User $user
+     *
      * @return Token
      */
     public function forUser(User $user)
@@ -44,7 +42,7 @@ class TokenFactory
             'user_id' => $user->id,
             'ip_address' => $this->request->ip(),
             'user_agent' => $this->getUserAgent(),
-            'expires_at' => is_null($ttl) ? null : Carbon::now()->addMinutes($ttl)
+            'expires_at' => is_null($ttl) ? null : Carbon::now()->addMinutes($ttl),
         ]);
 
         $token->save();
@@ -68,6 +66,7 @@ class TokenFactory
 
     /**
      * Determine if we should clean up expired tokens.
+     *
      * @return bool
      */
     protected function shouldCleanUp()

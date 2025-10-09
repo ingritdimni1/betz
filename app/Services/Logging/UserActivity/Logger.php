@@ -2,17 +2,11 @@
 
 namespace VanguardLTE\Services\Logging\UserActivity;
 
-use GeoIp2\Exception\AddressNotFoundException;
 use Illuminate\Contracts\Auth\Factory;
+use Illuminate\Http\Request;
 use VanguardLTE\Lib\GeoData;
 use VanguardLTE\Repositories\Activity\ActivityRepository;
 use VanguardLTE\User;
-use Illuminate\Http\Request;
-
-use VanguardLTE\Helpers\UserSystemInfoHelper;
-use GeoIp2\Database\Reader;
-
-use GeoIp2\Exception\InvalidRequestException;
 
 class Logger
 {
@@ -20,6 +14,7 @@ class Logger
      * @var Request
      */
     private $request;
+
     /**
      * @var Factory
      */
@@ -29,6 +24,7 @@ class Logger
      * @var User|null
      */
     protected $user = null;
+
     /**
      * @var ActivityRepository
      */
@@ -44,21 +40,20 @@ class Logger
     /**
      * Log user action.
      *
-     * @param $description
      * @return static
      */
     public function log($description, $original = '', $type = 'user', $system = null, $item_id = null, $shop_id = false)
     {
 
-        //$geo = geoip()->getLocation();
+        // $geo = geoip()->getLocation();
 
-        if (session()->exists('beforeUser')){
+        if (session()->exists('beforeUser')) {
             return true;
         }
 
         $data = GeoData::get_data();
 
-        if(!$shop_id){
+        if (! $shop_id) {
             $shop_id = auth()->check() ? auth()->user()->shop_id : $this->getShopId();
         }
 
@@ -71,7 +66,7 @@ class Logger
             'user_id' => auth()->check() ? $this->getUserId() : 1,
             'shop_id' => $shop_id,
             'ip_address' => $this->request->server('REMOTE_ADDR'),
-            'user_agent' => $this->getUserAgent()
+            'user_agent' => $this->getUserAgent(),
         ] + $data);
     }
 
@@ -90,7 +85,7 @@ class Logger
 
         $id = 1;
 
-        try{
+        try {
             $id = $this->auth->guard()->id();
         } catch (\Exception $e) {
             $id = 1;
@@ -105,7 +100,7 @@ class Logger
             return $this->user->shop_id;
         }
 
-        try{
+        try {
             $shop_id = $this->auth->guard()->user()->shop_id;
         } catch (\Exception $e) {
             $shop_id = 0;
@@ -125,7 +120,7 @@ class Logger
     }
 
     /**
-     * @param User|null $user
+     * @param  User|null  $user
      */
     public function setUser($user)
     {

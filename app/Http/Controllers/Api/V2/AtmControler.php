@@ -11,8 +11,7 @@ class AtmControler extends Controller
     {
         $response = [
             'sucsess' => true,
-            'data' =>
-            [
+            'data' => [
                 'atm_id' => 'ide2WtBxo8sC7M6yF$#@ImBx',
                 'atm_name' => '',
                 'atm_parent_id' => '5538',
@@ -29,8 +28,9 @@ class AtmControler extends Controller
                 'atm_enabled' => '1',
                 'atm_emptyrecycle' => '0',
                 'atm_forceupdate' => '0',
-            ]
+            ],
         ];
+
         return response()->json($response);
     }
 
@@ -99,7 +99,6 @@ class AtmControler extends Controller
         dd('AtmControler');
     }
 
-
     public function createUserAsync(Request $request)
     {
         dd('AtmControler');
@@ -109,22 +108,27 @@ class AtmControler extends Controller
     {
         dd('AtmControler');
     }
+
     public function SaveSettings(Request $request)
     {
         dd('AtmControler');
     }
+
     public function checkSignInAsync(Request $request)
     {
         dd('AtmControler');
     }
+
     public function checkVoucherAsync(Request $request)
     {
         dd('AtmControler');
     }
+
     public function createWithdrawCodeAsync(Request $request)
     {
         dd('AtmControler');
     }
+
     public function CashOUTAsync(Request $request)
     {
         dd('AtmControler');

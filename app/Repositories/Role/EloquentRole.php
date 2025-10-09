@@ -6,8 +6,6 @@ use VanguardLTE\Events\Role\Created;
 use VanguardLTE\Events\Role\Deleted;
 use VanguardLTE\Events\Role\Updated;
 use VanguardLTE\Role;
-use VanguardLTE\Support\Authorization\CacheFlusherTrait;
-use DB;
 
 class EloquentRole implements RoleRepository
 {

@@ -12,31 +12,33 @@ class CreditController extends Controller
     public function creditsDeposit(Request $request)
     {
         $payload = $request->json()->all();
-        if ($payload['userhash'] == "") {
+        if ($payload['userhash'] == '') {
             $response = [
                 'status' => false,
-                'msg' => 'userhash should not be blank!'
+                'msg' => 'userhash should not be blank!',
             ];
+
             return response()->json($response);
         }
-        $user = CrudModel::readData('users', 'auth_token="' . $payload['userhash'] . '"', '', 1);
+        $user = CrudModel::readData('users', 'auth_token="'.$payload['userhash'].'"', '', 1);
         if ($user) {
             $payloadUpdate = [
                 'balance' => $user->balance + $payload['amount'],
                 'count_balance' => $user->balance + $payload['amount'],
-                'total_in' => $user->total_in + $payload['amount']
+                'total_in' => $user->total_in + $payload['amount'],
             ];
-            CrudModel::updateRecord('users', $payloadUpdate, 'id=' . $user->id);
+            CrudModel::updateRecord('users', $payloadUpdate, 'id='.$user->id);
             $response = [
                 'status' => true,
-                'msg' => 'credit has been deposited successfully!'
+                'msg' => 'credit has been deposited successfully!',
             ];
         } else {
             $response = [
                 'status' => false,
-                'msg' => 'user not found!'
+                'msg' => 'user not found!',
             ];
         }
+
         return response()->json($response);
     }
 
@@ -44,63 +46,67 @@ class CreditController extends Controller
     public function creditsWithdraw(Request $request)
     {
         $payload = $request->json()->all();
-        if ($payload['userhash'] == "") {
+        if ($payload['userhash'] == '') {
             $response = [
                 'status' => false,
-                'msg' => 'userhash should not be blank!'
+                'msg' => 'userhash should not be blank!',
             ];
+
             return response()->json($response);
         }
-        $user = CrudModel::readData('users', 'auth_token="' . $payload['userhash'] . '"', '', 1);
+        $user = CrudModel::readData('users', 'auth_token="'.$payload['userhash'].'"', '', 1);
         if ($user) {
             $payloadUpdate = [
                 'balance' => $user->balance - $payload['amount'],
                 'count_balance' => $user->balance + $payload['amount'],
-                'total_out' => $user->total_out + $payload['amount']
+                'total_out' => $user->total_out + $payload['amount'],
             ];
-            CrudModel::updateRecord('users', $payloadUpdate, 'id=' . $user->id);
+            CrudModel::updateRecord('users', $payloadUpdate, 'id='.$user->id);
             $response = [
                 'status' => true,
-                'msg' => 'Amount has been withdrawn successfully!'
+                'msg' => 'Amount has been withdrawn successfully!',
             ];
         } else {
             $response = [
                 'status' => false,
-                'msg' => 'user not found!'
+                'msg' => 'user not found!',
             ];
         }
+
         return response()->json($response);
     }
 
-    // withdraw available balance to get same in out 
+    // withdraw available balance to get same in out
     public function creditsWithdrawAndCashOut(Request $request)
     {
         $payload = $request->json()->all();
-        if ($payload['userhash'] == "") {
+        if ($payload['userhash'] == '') {
             $response = [
                 'status' => false,
-                'msg' => 'userhash should not be blank!'
+                'msg' => 'userhash should not be blank!',
             ];
+
             return response()->json($response);
         }
-        $user = CrudModel::readData('users', 'auth_token="' . $payload['userhash'] . '"', '', 1);
+        $user = CrudModel::readData('users', 'auth_token="'.$payload['userhash'].'"', '', 1);
         if ($user) {
             $payloadUpdate = [
                 'balance' => 0,
                 'count_balance' => 0,
-                'total_out' => $user->total_out + $payload['amount']
+                'total_out' => $user->total_out + $payload['amount'],
             ];
-            CrudModel::updateRecord('users', $payloadUpdate, 'id=' . $user->id);
+            CrudModel::updateRecord('users', $payloadUpdate, 'id='.$user->id);
             $response = [
                 'status' => true,
-                'msg' => 'All amount has been withdrawn successfully!'
+                'msg' => 'All amount has been withdrawn successfully!',
             ];
         } else {
             $response = [
                 'status' => false,
-                'msg' => 'user not found!'
+                'msg' => 'user not found!',
             ];
         }
+
         return response()->json($response);
     }
 
@@ -108,14 +114,15 @@ class CreditController extends Controller
     public function payoutTicket(Request $request)
     {
         $payload = $request->json()->all();
-        if ($payload['userhash'] == "") {
+        if ($payload['userhash'] == '') {
             $response = [
                 'status' => false,
-                'msg' => 'userhash should not be blank!'
+                'msg' => 'userhash should not be blank!',
             ];
+
             return response()->json($response);
         }
-        $user = CrudModel::readData('users', 'auth_token="' . $payload['userhash'] . '"', '', 1);
+        $user = CrudModel::readData('users', 'auth_token="'.$payload['userhash'].'"', '', 1);
         if ($user) {
             $payloadInsert = [
                 'user_id' => $user->id,
@@ -127,14 +134,15 @@ class CreditController extends Controller
             $response = [
                 'status' => true,
                 'msg' => 'Payout ticket has been generated successfully!',
-                'payload' => $payloadInsert
+                'payload' => $payloadInsert,
             ];
         } else {
             $response = [
                 'status' => false,
-                'msg' => 'user not found!'
+                'msg' => 'user not found!',
             ];
         }
+
         return response()->json($response);
     }
 }

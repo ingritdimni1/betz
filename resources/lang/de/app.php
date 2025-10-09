@@ -16,7 +16,7 @@ return [
     'notifications' => 'Berechtigungen',
     'action' => 'Aktion',
     'action_sm' => 'aktion',
-    "actions_sm" => 'aktionen',
+    'actions_sm' => 'aktionen',
 
     // Activity Log Section
     'activity_log' => 'Aktivitäts-Log',
@@ -286,7 +286,7 @@ return [
     'you_have_to_accept_tos' => 'Sie müssen sie Nutzungsbedingungen bestätigen.',
     'permission_already_exists' => 'Eine Berechtigung mit diesem Namen existiert bereits!',
 
-    //Emails
+    // Emails
     'hi' => 'Hi',
     'new_user_was_registered_on' => 'Ein neuer Benutzer wurde eben auf der WebSeite :app registriert.',
     'website' => 'WebSeite',
@@ -320,5 +320,5 @@ return [
     'unknown' => 'Unbekannt',
     'device' => 'Device',
     'browser' => 'Browser',
-    'invalid_social_auth' => "Bei der Authentifizierung ist ein Fehler aufgetreten. Bitte versuche es erneut."
+    'invalid_social_auth' => 'Bei der Authentifizierung ist ein Fehler aufgetreten. Bitte versuche es erneut.',
 ];

@@ -2,11 +2,11 @@
 
 namespace VanguardLTE\Repositories\Permission;
 
+use Cache;
 use VanguardLTE\Events\Permission\Created;
 use VanguardLTE\Events\Permission\Deleted;
 use VanguardLTE\Events\Permission\Updated;
 use VanguardLTE\Permission;
-use Cache;
 
 class EloquentPermission implements PermissionRepository
 {

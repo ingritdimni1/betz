@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Http\Requests\User
 {
     class UpdateProfileLoginDetailsRequest extends UpdateLoginDetailsRequest

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Omen
@@ -8,54 +9,55 @@
 
 namespace VanguardLTE\Lib;
 
+class Filter
+{
+    public static function country_filtered($user, $country = false)
+    {
 
-class Filter {
-
-    public static function country_filtered($user, $country=false){
-
-        if(!settings('country_check') || !settings('blocked_countries')){
+        if (! settings('country_check') || ! settings('blocked_countries')) {
             return false;
         }
-        if(!is_array(settings('blocked_countries'))){
+        if (! is_array(settings('blocked_countries'))) {
             return false;
         }
-        if(!count(settings('blocked_countries'))){
+        if (! count(settings('blocked_countries'))) {
             return false;
         }
-        if( !$user ){
+        if (! $user) {
             return false;
         }
-        if( $user->hasRole('admin') ){
+        if ($user->hasRole('admin')) {
             return false;
         }
-        if(!$country){
+        if (! $country) {
             $country = $user->country;
         }
 
-        if( $country != '' && in_array($country, settings('blocked_countries')) ){
+        if ($country != '' && in_array($country, settings('blocked_countries'))) {
             return true;
         }
 
         return false;
     }
 
-    public static function domain_filtered($email){
+    public static function domain_filtered($email)
+    {
 
-        if(!settings('domain_check') || !settings('blocked_domains')){
+        if (! settings('domain_check') || ! settings('blocked_domains')) {
             return false;
         }
-        if(!is_array(settings('blocked_domains'))){
+        if (! is_array(settings('blocked_domains'))) {
             return false;
         }
-        if(!count(settings('blocked_domains'))){
+        if (! count(settings('blocked_domains'))) {
             return false;
         }
 
-        foreach (settings('blocked_domains') AS $domain){
-            if( preg_match('/'. $domain .'$/', $email)){
+        foreach (settings('blocked_domains') as $domain) {
+            if (preg_match('/'.$domain.'$/', $email)) {
                 return [
                     'success' => true,
-                    'domain' => $domain
+                    'domain' => $domain,
                 ];
             }
         }
@@ -63,21 +65,22 @@ class Filter {
         return false;
     }
 
-    public static function phone_filtered($phone){
+    public static function phone_filtered($phone)
+    {
 
-        if(!settings('phone_prefix_check') || !settings('blocked_phone_prefixes')){
+        if (! settings('phone_prefix_check') || ! settings('blocked_phone_prefixes')) {
             return false;
         }
-        if(!is_array(settings('blocked_phone_prefixes'))){
+        if (! is_array(settings('blocked_phone_prefixes'))) {
             return false;
         }
-        if(!count(settings('blocked_phone_prefixes'))){
+        if (! count(settings('blocked_phone_prefixes'))) {
             return false;
         }
 
-        foreach (settings('blocked_phone_prefixes') AS $prefix){
+        foreach (settings('blocked_phone_prefixes') as $prefix) {
             $prefix = preg_replace('/[^0-9]/', '', $prefix);
-            if( $phone != '' && strpos($phone, $prefix) === 0){
+            if ($phone != '' && strpos($phone, $prefix) === 0) {
                 return true;
             }
         }

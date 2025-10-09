@@ -2,16 +2,13 @@
 
 namespace VanguardLTE\Extension;
 
-use GeoIp2\Database\Reader;
-use GeoIp2\Exception\AddressNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Session\DatabaseSessionHandler;
 use Illuminate\Support\Arr;
-use VanguardLTE\Helpers\UserSystemInfoHelper;
 use VanguardLTE\Lib\GeoData;
 
-class CustomDatabaseSessionHandler extends DatabaseSessionHandler {
-
+class CustomDatabaseSessionHandler extends DatabaseSessionHandler
+{
     protected function performInsert($sessionId, $payload)
     {
         try {
@@ -27,6 +24,4 @@ class CustomDatabaseSessionHandler extends DatabaseSessionHandler {
             $this->performUpdate($sessionId, $payload);
         }
     }
-
-
 }

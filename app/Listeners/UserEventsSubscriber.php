@@ -2,9 +2,6 @@
 
 namespace VanguardLTE\Listeners;
 
-use GeoIp2\Database\Reader;
-use GeoIp2\Exception\AddressNotFoundException;
-use VanguardLTE\Activity;
 use VanguardLTE\Events\Settings\Updated as SettingsUpdated;
 use VanguardLTE\Events\User\Banned;
 use VanguardLTE\Events\User\ChangedAvatar;
@@ -19,9 +16,7 @@ use VanguardLTE\Events\User\Registered;
 use VanguardLTE\Events\User\UpdatedByAdmin;
 use VanguardLTE\Events\User\UpdatedProfileDetails;
 use VanguardLTE\Events\User\UserConfirmed;
-use VanguardLTE\Events\User\UserEventContract;
 use VanguardLTE\Events\User\UserUnBanned;
-use VanguardLTE\Helpers\UserSystemInfoHelper;
 use VanguardLTE\Services\Logging\UserActivity\Logger;
 
 class UserEventsSubscriber
@@ -38,28 +33,28 @@ class UserEventsSubscriber
 
     public function onLogin(LoggedIn $event)
     {
-        $this->logger->log(trans('log.logged_in'), NULL, 'user', 'info');
+        $this->logger->log(trans('log.logged_in'), null, 'user', 'info');
     }
 
     public function onLogout(LoggedOut $event)
     {
-        $this->logger->log(trans('log.logged_out'), NULL, 'user', 'info');
+        $this->logger->log(trans('log.logged_out'), null, 'user', 'info');
     }
 
     public function onRegister(Registered $event)
     {
-        //$this->logger->setUser($event->getRegisteredUser());
-        //$this->logger->log(trans('log.created_account'), NULL, 'user', 'info');
+        // $this->logger->setUser($event->getRegisteredUser());
+        // $this->logger->log(trans('log.created_account'), NULL, 'user', 'info');
     }
 
     public function onAvatarChange(ChangedAvatar $event)
     {
-        //$this->logger->log(trans('log.updated_avatar'), NULL, 'user', 'info');
+        // $this->logger->log(trans('log.updated_avatar'), NULL, 'user', 'info');
     }
 
     public function onProfileDetailsUpdate(UpdatedProfileDetails $event)
     {
-        //$this->logger->log(trans('log.updated_profile'), NULL, 'user', 'info');
+        // $this->logger->log(trans('log.updated_profile'), NULL, 'user', 'info');
     }
 
     public function onDelete(Deleted $event)
@@ -69,7 +64,7 @@ class UserEventsSubscriber
             ['name' => $event->getDeletedUser()->present()->username]
         );
 
-        //$this->logger->log($message, NULL, 'user', 'info');
+        // $this->logger->log($message, NULL, 'user', 'info');
     }
 
     public function onBan(Banned $event)
@@ -79,7 +74,7 @@ class UserEventsSubscriber
             ['name' => $event->getBannedUser()->present()->username]
         );
 
-        //$this->logger->log($message, NULL, 'user', 'info');
+        // $this->logger->log($message, NULL, 'user', 'info');
     }
 
     public function onUpdateByAdmin(UpdatedByAdmin $event)
@@ -89,7 +84,7 @@ class UserEventsSubscriber
             ['name' => $event->getUpdatedUser()->present()->username]
         );
 
-        //$this->logger->log($message, NULL, 'user', 'info');
+        // $this->logger->log($message, NULL, 'user', 'info');
     }
 
     public function onCreate(Created $event)
@@ -99,53 +94,52 @@ class UserEventsSubscriber
             ['name' => $event->getCreatedUser()->present()->username]
         );
 
-        //$this->logger->log($message, NULL, 'user', 'info');
+        // $this->logger->log($message, NULL, 'user', 'info');
     }
 
     public function onSettingsUpdate(SettingsUpdated $event)
     {
-        //$this->logger->log(trans('log.updated_settings'), NULL, 'user', 'info');
+        // $this->logger->log(trans('log.updated_settings'), NULL, 'user', 'info');
     }
-
 
     public function onMoneyIn(MoneyIn $event)
     {
         $shop = $event->getUser()->shop;
-        $text = trans('app.balance_updated') . ' / ' . $event->getUser()->username. '  +' . $event->getSum() . ' ';
-        if($shop){
+        $text = trans('app.balance_updated').' / '.$event->getUser()->username.'  +'.$event->getSum().' ';
+        if ($shop) {
             $text .= $shop->currency;
         }
 
-        //$this->logger->setUser($event->getUser());
-        //$this->logger->log($text, NULL, 'user', 'info');
+        // $this->logger->setUser($event->getUser());
+        // $this->logger->log($text, NULL, 'user', 'info');
     }
 
     public function onMoneyOut(MoneyOut $event)
     {
         $shop = $event->getUser()->shop;
-        $text = trans('app.balance_updated') . ' / ' . $event->getUser()->username. '  -' . $event->getSum() . ' ';
-        if($shop){
+        $text = trans('app.balance_updated').' / '.$event->getUser()->username.'  -'.$event->getSum().' ';
+        if ($shop) {
             $text .= $shop->currency;
         }
-        //$this->logger->log($text, NULL, 'user', 'info');
+        // $this->logger->log($text, NULL, 'user', 'info');
     }
 
     public function onUserUnBanned(UserUnBanned $event)
     {
-        //$this->logger->log(trans('app.account_is_unbanned'), NULL, 'user', 'info');
+        // $this->logger->log(trans('app.account_is_unbanned'), NULL, 'user', 'info');
     }
 
     public function onUserConfirmed(UserConfirmed $event)
     {
-        //$this->logger->setUser($event->getUser());
-        //$this->logger->log(trans('app.account_is_confirmed'), NULL, 'user', 'info');
+        // $this->logger->setUser($event->getUser());
+        // $this->logger->log(trans('app.account_is_confirmed'), NULL, 'user', 'info');
     }
 
     public function onGeoChanged(GeoChanged $event)
     {
         $user = $event->getUser();
-        $text = 'GEO / ' . $user->username;
-        $this->logger->log($text, NULL, 'user', 'geo');
+        $text = 'GEO / '.$user->username;
+        $this->logger->log($text, null, 'user', 'geo');
 
     }
 
@@ -168,7 +162,6 @@ class UserEventsSubscriber
         $events->listen(Deleted::class, "{$class}@onDelete");
         $events->listen(Banned::class, "{$class}@onBan");
         $events->listen(SettingsUpdated::class, "{$class}@onSettingsUpdate");
-
 
         $events->listen(MoneyIn::class, "{$class}@onMoneyIn");
         $events->listen(MoneyOut::class, "{$class}@onMoneyOut");

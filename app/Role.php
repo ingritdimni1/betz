@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE
 {
     class Role extends \jeremykenedy\LaravelRoles\Models\Role

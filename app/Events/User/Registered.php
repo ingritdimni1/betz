@@ -13,7 +13,6 @@ class Registered
 
     /**
      * Registered constructor.
-     * @param User $registeredUser
      */
     public function __construct(User $registeredUser)
     {

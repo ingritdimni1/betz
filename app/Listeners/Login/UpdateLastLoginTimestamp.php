@@ -13,6 +13,7 @@ class UpdateLastLoginTimestamp
      * @var UserRepository
      */
     private $users;
+
     /**
      * @var Guard
      */
@@ -27,7 +28,6 @@ class UpdateLastLoginTimestamp
     /**
      * Handle the event.
      *
-     * @param LoggedIn $event
      * @return void
      */
     public function handle(LoggedIn $event)

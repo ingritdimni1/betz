@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Http\Requests\Permission
 {
     class RemovePermissionRequest extends \VanguardLTE\Http\Requests\Request
@@ -7,6 +8,7 @@ namespace VanguardLTE\Http\Requests\Permission
         {
             return $this->route('permission')->removable;
         }
+
         public function rules()
         {
             return [];

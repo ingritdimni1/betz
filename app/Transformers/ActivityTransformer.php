@@ -3,9 +3,7 @@
 namespace VanguardLTE\Transformers;
 
 use League\Fractal\TransformerAbstract;
-use VanguardLTE\Repositories\User\UserRepository;
 use VanguardLTE\Services\Logging\UserActivity\Activity;
-use VanguardLTE\User;
 
 class ActivityTransformer extends TransformerAbstract
 {
@@ -25,7 +23,7 @@ class ActivityTransformer extends TransformerAbstract
             'platform' => $agent->platform(),
             'device' => $agent->device(),
             'description' => $activity->description,
-            'created_at' => (string) $activity->created_at
+            'created_at' => (string) $activity->created_at,
         ];
     }
 

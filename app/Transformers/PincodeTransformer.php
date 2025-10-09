@@ -4,9 +4,6 @@ namespace VanguardLTE\Transformers;
 
 use League\Fractal\TransformerAbstract;
 use VanguardLTE\Pincode;
-use VanguardLTE\Repositories\Country\CountryRepository;
-use VanguardLTE\Repositories\Role\RoleRepository;
-use VanguardLTE\JPG;
 
 class PincodeTransformer extends TransformerAbstract
 {

@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     /*
      * Default view used to render Javascript validation code
@@ -31,4 +31,4 @@ return array(
      */
     'disable_remote_validation' => false,
 
-);
+];

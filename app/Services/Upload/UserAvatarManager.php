@@ -2,11 +2,11 @@
 
 namespace VanguardLTE\Services\Upload;
 
-use Illuminate\Http\UploadedFile;
-use VanguardLTE\User;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Http\UploadedFile;
 use Intervention\Image\ImageManager;
 use Symfony\Component\HttpFoundation\File\File;
+use VanguardLTE\User;
 
 class UserAvatarManager
 {
@@ -23,6 +23,7 @@ class UserAvatarManager
      * @var Filesystem
      */
     private $fs;
+
     /**
      * @var ImageManager
      */
@@ -37,21 +38,19 @@ class UserAvatarManager
     /**
      * Upload and crop user avatar to predefined width and height.
      *
-     * @param User $user
-     * @param UploadedFile $file
-     * @param array|null $cropPoints
      * @return string Avatar file name.
      */
-    public function uploadAndCropAvatar(User $user, UploadedFile $file, array $cropPoints = null)
+    public function uploadAndCropAvatar(User $user, UploadedFile $file, ?array $cropPoints = null)
     {
-        list($name, $avatarImage) = $this->saveFile($file);
+        [$name, $avatarImage] = $this->saveFile($file);
 
         try {
             $this->cropAndResizeImage($avatarImage, $cropPoints);
             $this->deleteAvatarIfUploaded($user);
         } catch (\Exception $e) {
-            logger("Cannot upload avatar. " . $e->getMessage());
-            $this->fs->delete($this->getDestinationDirectory() . "/" . $name);
+            logger('Cannot upload avatar. '.$e->getMessage());
+            $this->fs->delete($this->getDestinationDirectory().'/'.$name);
+
             return null;
         }
 
@@ -63,7 +62,6 @@ class UserAvatarManager
      * If he is using some external url for avatar, then
      * it is assumed that avatar is not uploaded manually.
      *
-     * @param User $user
      * @return bool
      */
     private function userHasUploadedAvatar(User $user)
@@ -74,7 +72,6 @@ class UserAvatarManager
     /**
      * Save avatar for provided user.
      *
-     * @param UploadedFile $uploadedFile
      * @return array
      */
     private function saveFile(UploadedFile $uploadedFile)
@@ -99,9 +96,6 @@ class UserAvatarManager
         return public_path('upload/users');
     }
 
-    /**
-     * @param User $user
-     */
     public function deleteAvatarIfUploaded(User $user)
     {
         if (! $this->userHasUploadedAvatar($user)) {
@@ -109,7 +103,7 @@ class UserAvatarManager
         }
 
         $path = sprintf(
-            "%s/%s",
+            '%s/%s',
             $this->getDestinationDirectory(),
             $user->avatar
         );
@@ -124,18 +118,16 @@ class UserAvatarManager
      */
     private function generateAvatarName()
     {
-        return sprintf("%s.png", \Illuminate\Support\Str::random());
+        return sprintf('%s.png', \Illuminate\Support\Str::random());
     }
 
     /**
      * Crop image from provided selected points and
      * resize it to predefined width and height.
      *
-     * @param File $avatarImage
-     * @param array|null $points
      * @return \Intervention\Image\Image
      */
-    private function cropAndResizeImage(File $avatarImage, array $points = null)
+    private function cropAndResizeImage(File $avatarImage, ?array $points = null)
     {
         $image = $this->imageManager->make(
             $avatarImage->getRealPath()

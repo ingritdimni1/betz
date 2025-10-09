@@ -3,7 +3,6 @@
 namespace VanguardLTE\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -16,7 +15,6 @@ class NewMessageFromContactForm extends Notification
      *
      * @return void
      */
-
     public $message;
 
     public function __construct($message)

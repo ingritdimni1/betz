@@ -2,11 +2,9 @@
 
 namespace VanguardLTE\Listeners;
 
-use VanguardLTE\Activity;
-use VanguardLTE\Events\Refunds\RefundEdited;
-use VanguardLTE\Events\Refunds\NewRefund;
 use VanguardLTE\Events\Refunds\DeleteRefund;
-use VanguardLTE\Events\User\UserEventContract;
+use VanguardLTE\Events\Refunds\NewRefund;
+use VanguardLTE\Events\Refunds\RefundEdited;
 use VanguardLTE\Services\Logging\UserActivity\Logger;
 
 class RefundEventsSubscriber
@@ -25,7 +23,7 @@ class RefundEventsSubscriber
     {
         $refund = $event->getNewRefund();
 
-        //$this->logger->log('New Refund / ' . $refund->id . ', Shop ' . $refund->shop_id, $type = 'system', 'refund', $refund->id);
+        // $this->logger->log('New Refund / ' . $refund->id . ', Shop ' . $refund->shop_id, $type = 'system', 'refund', $refund->id);
     }
 
     public function onRefundEdited(RefundEdited $event)
@@ -39,22 +37,22 @@ class RefundEventsSubscriber
         $text = 'Update Refund | ';
         $textOriginal = 'Update Refund | ';
 
-        foreach(['min_pay' => 'Min Pay', 'max_pay' => 'Max Pay', 'percent' => 'Percent',
-                   'min_balance' => 'Min Balance', 'status' => 'Status'] AS $column=>$title){
+        foreach (['min_pay' => 'Min Pay', 'max_pay' => 'Max Pay', 'percent' => 'Percent',
+            'min_balance' => 'Min Balance', 'status' => 'Status'] as $column => $title) {
 
-            if( isset($original[$column]) ){
+            if (isset($original[$column])) {
                 $textOriginal .= $this->template($column, $title, $original[$column]);
-            } else{
-                $textOriginal .= ' ' .$title. ' =  | ';
+            } else {
+                $textOriginal .= ' '.$title.' =  | ';
             }
-            if( isset($changes[$column]) ){
+            if (isset($changes[$column])) {
                 $changed = true;
                 $text .= $this->template($column, $title, $changes[$column]);
-            } else{
-                if( isset($original[$column]) ){
+            } else {
+                if (isset($original[$column])) {
                     $text .= $this->template($column, $title, $original[$column]);
-                } else{
-                    $text .= ' ' .$title. ' =  | ';
+                } else {
+                    $text .= ' '.$title.' =  | ';
                 }
             }
         }
@@ -106,7 +104,7 @@ class RefundEventsSubscriber
         }
         */
 
-        if(!$changed){
+        if (! $changed) {
             return;
         }
 
@@ -116,16 +114,18 @@ class RefundEventsSubscriber
     public function onDeleteRefund(DeleteRefund $event)
     {
         $refund = $event->getDeleteRefund();
-        //$this->logger->log('Delete Refund / ' . $refund->id . ', Shop ' . $refund->shop_id, $type = 'system', 'refund', $refund->id);
+        // $this->logger->log('Delete Refund / ' . $refund->id . ', Shop ' . $refund->shop_id, $type = 'system', 'refund', $refund->id);
     }
 
-    public function template($key, $title, $value){
+    public function template($key, $title, $value)
+    {
         $text = '';
-        if($key == 'status'){
-            $text .= ' ' .$title. ' = ' . ($value ? 'Active' : 'Disabled' ) . ' | ';
+        if ($key == 'status') {
+            $text .= ' '.$title.' = '.($value ? 'Active' : 'Disabled').' | ';
         } else {
-            $text .= ' ' . $title. ' = ' . $value . ' | ';
+            $text .= ' '.$title.' = '.$value.' | ';
         }
+
         return $text;
     }
 

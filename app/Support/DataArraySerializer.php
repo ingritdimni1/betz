@@ -29,7 +29,6 @@ class DataArraySerializer extends \League\Fractal\Serializer\DataArraySerializer
     /**
      * Format pagination data according to Illiminate defined format.
      *
-     * @param PaginatorInterface $paginator
      * @return array
      */
     public function paginator(PaginatorInterface $paginator)
@@ -62,7 +61,6 @@ class DataArraySerializer extends \League\Fractal\Serializer\DataArraySerializer
     /**
      * Get the number of the first item in the slice.
      *
-     * @param PaginatorInterface $paginator
      * @return int
      */
     private function firstItem(PaginatorInterface $paginator)
@@ -77,7 +75,6 @@ class DataArraySerializer extends \League\Fractal\Serializer\DataArraySerializer
     /**
      * Get the number of the last item in the slice.
      *
-     * @param PaginatorInterface $paginator
      * @return int
      */
     private function lastItem(PaginatorInterface $paginator)

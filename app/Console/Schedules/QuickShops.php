@@ -1,8 +1,6 @@
 <?php
 
-
 namespace VanguardLTE\Console\Schedules;
-
 
 use Carbon\Carbon;
 use jeremykenedy\LaravelRoles\Models\Role;
@@ -24,10 +22,10 @@ use VanguardLTE\WelcomeBonus;
 
 class QuickShops
 {
-
     public $max_time_in_sec;
 
-    public function __construct($max_time_in_sec=5){
+    public function __construct($max_time_in_sec = 5)
+    {
         $this->max_time_in_sec = $max_time_in_sec;
     }
 
@@ -38,8 +36,8 @@ class QuickShops
         $start = microtime(true);
 
         $task = QuickShop::first();
-        if($task){
-            //$task->update(['finished' => 1]);
+        if ($task) {
+            // $task->update(['finished' => 1]);
 
             $data = json_decode($task->data, true);
 
@@ -48,20 +46,21 @@ class QuickShops
             $shop = [
                 'name' => $data['name'],
                 'percent' => $data['percent'],
-                'frontend' =>  $data['frontend'],
+                'frontend' => $data['frontend'],
                 'orderby' => $data['orderby'],
                 'currency' => $data['currency'],
-                'categories' =>  $data['categories'],
+                'categories' => $data['categories'],
                 'balance' => $data['balance'],
                 'country' => $data['country'],
                 'os' => $data['os'],
                 'device' => $data['device'],
-                'access' =>  $data['access'],
+                'access' => $data['access'],
             ];
 
             $shops = Shop::where('name', $data['name'])->count();
-            if($shops){
+            if ($shops) {
                 $task->delete();
+
                 return;
             }
 
@@ -102,36 +101,36 @@ class QuickShops
             // create shop
 
             $temp = [
-                'country' =>  $data['country'],
+                'country' => $data['country'],
                 'os' => $data['os'],
                 'device' => $data['device'],
             ];
-            if(count($temp)){
-                foreach($temp AS $key=>$item){
+            if (count($temp)) {
+                foreach ($temp as $key => $item) {
                     $shop[$key] = implode(',', $item);
                 }
             }
 
             $shop = Shop::create($shop + ['user_id' => $distributor->id, 'is_blocked' => 0]);
-            if( $data['country'] ){
-                foreach ($data['country'] AS $country){
+            if ($data['country']) {
+                foreach ($data['country'] as $country) {
                     ShopCountry::create(['shop_id' => $shop->id, 'country' => $country]);
                 }
             }
-            if( $data['os'] ){
-                foreach ($data['os'] AS $os){
+            if ($data['os']) {
+                foreach ($data['os'] as $os) {
                     ShopOS::create(['shop_id' => $shop->id, 'os' => $os]);
                 }
             }
-            if( $data['device'] ){
-                foreach ($data['device'] AS $device){
+            if ($data['device']) {
+                foreach ($data['device'] as $device) {
                     ShopDevice::create(['shop_id' => $shop->id, 'device' => $device]);
                 }
             }
 
             $progress = Progress::where('shop_id', 0)->get();
-            if( count($progress)){
-                foreach($progress AS $item){
+            if (count($progress)) {
+                foreach ($progress as $item) {
                     $newProgress = $item->replicate();
                     $newProgress->shop_id = $shop->id;
                     $newProgress->save();
@@ -139,8 +138,8 @@ class QuickShops
             }
 
             $welcomebonuses = WelcomeBonus::where('shop_id', 0)->get();
-            if( count($welcomebonuses)){
-                foreach($welcomebonuses AS $item){
+            if (count($welcomebonuses)) {
+                foreach ($welcomebonuses as $item) {
                     $newWelcomeBonus = $item->replicate();
                     $newWelcomeBonus->shop_id = $shop->id;
                     $newWelcomeBonus->save();
@@ -148,34 +147,33 @@ class QuickShops
             }
 
             $smsbonuses = SMSBonus::where('shop_id', 0)->get();
-            if( count($smsbonuses)){
-                foreach($smsbonuses AS $item){
+            if (count($smsbonuses)) {
+                foreach ($smsbonuses as $item) {
                     $newSMSBonus = $item->replicate();
                     $newSMSBonus->shop_id = $shop->id;
                     $newSMSBonus->save();
                 }
             }
 
-
             $open_shift = OpenShift::create([
                 'start_date' => Carbon::now(),
-                'balance' => 0,//$shop->balance,
+                'balance' => 0, // $shop->balance,
                 'user_id' => $cashier->id,
-                'shop_id' => $shop->id
+                'shop_id' => $shop->id,
             ]);
 
             // add balance
-            if($agentBalance > 0){
+            if ($agentBalance > 0) {
                 $admin = User::where('role_id', 6)->first();
                 $agent->addBalance('add', $agentBalance, $admin);
                 sleep(1);
             }
-            if($distributorBalance > 0){
+            if ($distributorBalance > 0) {
                 $distributor->addBalance('add', $distributorBalance, $agent);
                 sleep(1);
             }
 
-            if($shopBalance > 0){
+            if ($shopBalance > 0) {
                 $open_shift->increment('balance_in', $shopBalance);
                 $distributor->decrement('balance', $shopBalance);
                 $shop->increment('balance', $shopBalance);
@@ -183,14 +181,14 @@ class QuickShops
                 sleep(1);
             }
 
-            foreach([$agent, $distributor, $manager, $cashier] AS $user){
+            foreach ([$agent, $distributor, $manager, $cashier] as $user) {
                 ShopUser::create(['shop_id' => $shop->id, 'user_id' => $user->id]);
                 $user->update(['shop_id' => $shop->id]);
             }
 
             // create users
             $role = Role::find(1);
-            for($i=0; $i<$users['count']; $i++){
+            for ($i = 0; $i < $users['count']; $i++) {
                 $sleep++;
                 $number = rand(111111111, 999999999);
                 $newUser = User::create([
@@ -200,10 +198,10 @@ class QuickShops
                     'status' => 'Active',
                     'shop_id' => $shop->id,
                     'parent_id' => $cashier->id,
-                    'created_at' => time() + $sleep
+                    'created_at' => time() + $sleep,
                 ]);
                 $newUser->attachRole($role);
-                if($users['balance'] > 0){
+                if ($users['balance'] > 0) {
                     $newUser->addBalance('add', $users['balance'], $cashier);
                     sleep(1);
                 }
@@ -211,8 +209,8 @@ class QuickShops
                 $newUser->update(['shop_id' => $shop->id]);
             }
 
-            if( $data['categories']){
-                foreach ($data['categories'] AS $category){
+            if ($data['categories']) {
+                foreach ($data['categories'] as $category) {
                     ShopCategory::create(['shop_id' => $shop->id, 'category_id' => $category]);
                 }
             }
@@ -221,14 +219,12 @@ class QuickShops
             $task->delete();
         }
 
-
         $time_elapsed_secs = microtime(true) - $start;
-        if($time_elapsed_secs > $this->max_time_in_sec){
+        if ($time_elapsed_secs > $this->max_time_in_sec) {
             Info('------------------');
             Info('QuickShops');
-            Info('exec time ' . $time_elapsed_secs . ' sec');
+            Info('exec time '.$time_elapsed_secs.' sec');
         }
 
     }
-
 }

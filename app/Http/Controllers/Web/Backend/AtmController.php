@@ -13,12 +13,13 @@ class AtmController extends Controller
     // Return the list of atms available for selected shop
     public function index(Request $request)
     {
-        $where = 'shop_id=' . auth()->user()->shop_id;
+        $where = 'shop_id='.auth()->user()->shop_id;
         $atms = CrudModel::readData('atm', $where, '', 1);
         $response = [
             'atms' => $atms,
-            'shop' => auth()->user()->shop
+            'shop' => auth()->user()->shop,
         ];
+
         return view('backend.atm.list', ['response' => $response]);
     }
 
@@ -36,25 +37,27 @@ class AtmController extends Controller
             'api_key_id' => $api_key_id,
         ];
         CrudModel::createNewRecord('atm', $payload);
+
         return redirect()->back()->with('success', 'ATM has been created successfully!');
     }
 
     // Generate New API key
     public function resetAtm()
     {
-        $where = 'shop_id=' . auth()->user()->shop_id;
+        $where = 'shop_id='.auth()->user()->shop_id;
         $payload = [
-            'atm_in' => "",
-            'atm_out' => "",
-            'atm_recycle' => "",
-            'atm_rec_5' => "",
-            'atm_rec_10' => "",
-            'atm_rec_20' => "",
-            'atm_rec_50' => "",
-            'atm_rec_100' => "",
-            'atm_rec_200' => "",
+            'atm_in' => '',
+            'atm_out' => '',
+            'atm_recycle' => '',
+            'atm_rec_5' => '',
+            'atm_rec_10' => '',
+            'atm_rec_20' => '',
+            'atm_rec_50' => '',
+            'atm_rec_100' => '',
+            'atm_rec_200' => '',
         ];
         CrudModel::updateRecord('atm', $payload, $where);
+
         return redirect()->back()->with('success', 'ATM has been reset successfully!');
     }
 
@@ -62,8 +65,9 @@ class AtmController extends Controller
     public function newApiKey($api_id)
     {
         $api_id = decoded($api_id);
-        $where = 'id=' . $api_id;
+        $where = 'id='.$api_id;
         ApiController::generateNewApiKey($where);
+
         return redirect()->back()->with('success', 'A new API key has been created successfully!');
     }
 
@@ -71,11 +75,11 @@ class AtmController extends Controller
     public function deleteATM($id, $api_id)
     {
         // delete record from atm
-        $where = 'id=' . decoded($id);
+        $where = 'id='.decoded($id);
         CrudModel::deleteRecord('atm', $where);
 
         // delete record from apis
-        $where = 'id=' . decoded($api_id);
+        $where = 'id='.decoded($api_id);
         ApiController::deleteApiKey($where);
 
         return redirect()->back()->with('success', 'ATM has been deleted successfully!');
@@ -84,9 +88,9 @@ class AtmController extends Controller
     // Update status of ATM
     public function statusUpdate($status)
     {
-        $where = 'shop_id=' . auth()->user()->shop_id;
+        $where = 'shop_id='.auth()->user()->shop_id;
         $payload = [
-            'atm_status' => decoded($status)
+            'atm_status' => decoded($status),
         ];
         CrudModel::updateRecord('atm', $payload, $where);
 

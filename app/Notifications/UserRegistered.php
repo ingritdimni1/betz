@@ -3,9 +3,8 @@
 namespace VanguardLTE\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 use VanguardLTE\User;
 
 class UserRegistered extends Notification
@@ -19,7 +18,6 @@ class UserRegistered extends Notification
 
     /**
      * Create a new notification instance.
-     * @param User $registeredUser
      */
     public function __construct(User $registeredUser)
     {
@@ -45,7 +43,7 @@ class UserRegistered extends Notification
      */
     public function toMail($notifiable)
     {
-        $subject = sprintf("%s - %s", settings('app_name'), trans('app.new_user_registration'));
+        $subject = sprintf('%s - %s', settings('app_name'), trans('app.new_user_registration'));
 
         return (new MailMessage)
             ->subject($subject)

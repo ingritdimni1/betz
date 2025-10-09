@@ -2,7 +2,6 @@
 
 namespace VanguardLTE\Providers;
 
-use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use VanguardLTE\User;
 
@@ -29,15 +28,15 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         \Blade::directive('endrole', function ($expression) {
-            return "<?php endif; ?>";
+            return '<?php endif; ?>';
         });
 
         \Blade::directive('permission', function ($expression) {
             return "<?php if (\\Auth::user()->hasPermission({$expression})) : ?>";
         });
-        
+
         \Blade::directive('endpermission', function ($expression) {
-            return "<?php endif; ?>";
+            return '<?php endif; ?>';
         });
 
         \Gate::define('manage-session', function (User $user, $session) {

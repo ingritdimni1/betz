@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Http\Requests\Auth
 {
     class PasswordRemindRequest extends \VanguardLTE\Http\Requests\Request

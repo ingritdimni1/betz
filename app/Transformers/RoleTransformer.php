@@ -2,9 +2,9 @@
 
 namespace VanguardLTE\Transformers;
 
-use League\Fractal\TransformerAbstract;
-// VanguardLTE\Role;
 use jeremykenedy\LaravelRoles\Models\Role;
+// VanguardLTE\Role;
+use League\Fractal\TransformerAbstract;
 
 class RoleTransformer extends TransformerAbstract
 {
@@ -18,7 +18,7 @@ class RoleTransformer extends TransformerAbstract
             'slug' => $role->slug,
             'description' => $role->description,
             'updated_at' => (string) $role->updated_at,
-            'created_at' => (string) $role->created_at
+            'created_at' => (string) $role->created_at,
         ];
     }
 

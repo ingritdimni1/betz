@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Games\BermudaTrianglePTM
 {
     set_time_limit(5);
@@ -8,47 +9,36 @@ namespace VanguardLTE\Games\BermudaTrianglePTM
         {
             function get_($request, $game)
             {
-                \DB::transaction(function() use ($request, $game)
-                {
-                    try
-                    {
+                \DB::transaction(function () use ($game) {
+                    try {
                         $userId = \Auth::id();
-                        if( $userId == null ) 
-                        {
+                        if ($userId == null) {
                             $response = '{"responseEvent":"error","responseType":"","serverResponse":"invalid login"}';
-                            exit( $response );
+                            exit($response);
                         }
                         $slotSettings = new SlotSettings($game, $userId);
-                        if( !$slotSettings->is_active() ) 
-                        {
+                        if (! $slotSettings->is_active()) {
                             $response = '{"responseEvent":"error","responseType":"","serverResponse":"Game is disabled"}';
-                            exit( $response );
+                            exit($response);
                         }
                         $postData = json_decode(trim(file_get_contents('php://input')), true);
                         $balanceInCents = sprintf('%01.2f', $slotSettings->GetBalance()) * 100;
                         $result_tmp = [];
-                        if( isset($postData['umid']) ) 
-                        {
+                        if (isset($postData['umid'])) {
                             $umid = $postData['umid'];
-                            if( isset($postData['ID']) ) 
-                            {
+                            if (isset($postData['ID'])) {
                                 $umid = $postData['ID'];
                             }
-                        }
-                        else
-                        {
-                            if( isset($postData['ID']) ) 
-                            {
+                        } else {
+                            if (isset($postData['ID'])) {
                                 $result_tmp[] = '3:::{"ID":18}';
-                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"' . $slotSettings->slotCurrency . '","balanceInCents":' . $balanceInCents . ',"deltaBalanceInCents":1},"ID":40085}';
+                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"'.$slotSettings->slotCurrency.'","balanceInCents":'.$balanceInCents.',"deltaBalanceInCents":1},"ID":40085}';
                             }
                             $umid = 0;
                         }
-                        if( isset($postData['spinType']) ) 
-                        {
+                        if (isset($postData['spinType'])) {
                             $result_tmp = [];
-                            if( $postData['spinType'] == 'regular' ) 
-                            {
+                            if ($postData['spinType'] == 'regular') {
                                 $umid = '0';
                                 $postData['slotEvent'] = 'bet';
                                 $bonusMpl = 1;
@@ -58,9 +48,7 @@ namespace VanguardLTE\Games\BermudaTrianglePTM
                                 $slotSettings->SetGameData('BermudaTrianglePTMMTotalWin', 0);
                                 $slotSettings->SetGameData('BermudaTrianglePTMMFreeBalance', 0);
                                 $slotSettings->SetGameData('BermudaTrianglePTMMFreeStartWin', 0);
-                            }
-                            else if( $postData['spinType'] == 'free' ) 
-                            {
+                            } elseif ($postData['spinType'] == 'free') {
                                 $umid = '0';
                                 $postData['slotEvent'] = 'freespin';
                                 $slotSettings->SetGameData('BermudaTrianglePTMMCurrentFreeGame', $slotSettings->GetGameData('BermudaTrianglePTMMCurrentFreeGame') + 1);
@@ -68,103 +56,93 @@ namespace VanguardLTE\Games\BermudaTrianglePTM
                             }
                             $linesId = [];
                             $linesId[0] = [
-                                2, 
-                                2, 
-                                2, 
-                                2, 
-                                2
+                                2,
+                                2,
+                                2,
+                                2,
+                                2,
                             ];
                             $linesId[1] = [
-                                1, 
-                                1, 
-                                1, 
-                                1, 
-                                1
+                                1,
+                                1,
+                                1,
+                                1,
+                                1,
                             ];
                             $linesId[2] = [
-                                3, 
-                                3, 
-                                3, 
-                                3, 
-                                3
+                                3,
+                                3,
+                                3,
+                                3,
+                                3,
                             ];
                             $linesId[3] = [
-                                1, 
-                                2, 
-                                3, 
-                                2, 
-                                1
+                                1,
+                                2,
+                                3,
+                                2,
+                                1,
                             ];
                             $linesId[4] = [
-                                3, 
-                                2, 
-                                1, 
-                                2, 
-                                3
+                                3,
+                                2,
+                                1,
+                                2,
+                                3,
                             ];
                             $linesId[5] = [
-                                1, 
-                                1, 
-                                2, 
-                                1, 
-                                1
+                                1,
+                                1,
+                                2,
+                                1,
+                                1,
                             ];
                             $linesId[6] = [
-                                3, 
-                                3, 
-                                2, 
-                                3, 
-                                3
+                                3,
+                                3,
+                                2,
+                                3,
+                                3,
                             ];
                             $linesId[7] = [
-                                2, 
-                                1, 
-                                1, 
-                                1, 
-                                2
+                                2,
+                                1,
+                                1,
+                                1,
+                                2,
                             ];
                             $linesId[8] = [
-                                2, 
-                                3, 
-                                3, 
-                                3, 
-                                2
+                                2,
+                                3,
+                                3,
+                                3,
+                                2,
                             ];
                             $postData['bet'] = $postData['bet'] / 100;
-                            for( $i = 0; $i < count($postData['lines']); $i++ ) 
-                            {
-                                if( $postData['lines'][$i] > 0 ) 
-                                {
+                            for ($i = 0; $i < count($postData['lines']); $i++) {
+                                if ($postData['lines'][$i] > 0) {
                                     $lines = $i + 1;
-                                }
-                                else
-                                {
+                                } else {
                                     break;
                                 }
                             }
                             $betLine = $postData['bet'] / $lines;
-                            if( $postData['slotEvent'] == 'bet' || $postData['slotEvent'] == 'freespin' || $postData['slotEvent'] == 'respin' ) 
-                            {
-                                if( $lines <= 0 || $betLine <= 0.0001 ) 
-                                {
-                                    $response = '{"responseEvent":"error","responseType":"' . $postData['slotEvent'] . '","serverResponse":"invalid bet state"}';
-                                    exit( $response );
+                            if ($postData['slotEvent'] == 'bet' || $postData['slotEvent'] == 'freespin' || $postData['slotEvent'] == 'respin') {
+                                if ($lines <= 0 || $betLine <= 0.0001) {
+                                    $response = '{"responseEvent":"error","responseType":"'.$postData['slotEvent'].'","serverResponse":"invalid bet state"}';
+                                    exit($response);
                                 }
-                                if( $slotSettings->GetBalance() < ($lines * $betLine) ) 
-                                {
-                                    $response = '{"responseEvent":"error","responseType":"' . $postData['slotEvent'] . '","serverResponse":"invalid balance"}';
-                                    exit( $response );
+                                if ($slotSettings->GetBalance() < ($lines * $betLine)) {
+                                    $response = '{"responseEvent":"error","responseType":"'.$postData['slotEvent'].'","serverResponse":"invalid balance"}';
+                                    exit($response);
                                 }
-                                if( $slotSettings->GetGameData($slotSettings->slotId . 'FreeGames') < $slotSettings->GetGameData($slotSettings->slotId . 'CurrentFreeGame') && $postData['slotEvent'] == 'freespin' ) 
-                                {
-                                    $response = '{"responseEvent":"error","responseType":"' . $postData['slotEvent'] . '","serverResponse":"invalid bonus state"}';
-                                    exit( $response );
+                                if ($slotSettings->GetGameData($slotSettings->slotId.'FreeGames') < $slotSettings->GetGameData($slotSettings->slotId.'CurrentFreeGame') && $postData['slotEvent'] == 'freespin') {
+                                    $response = '{"responseEvent":"error","responseType":"'.$postData['slotEvent'].'","serverResponse":"invalid bonus state"}';
+                                    exit($response);
                                 }
                             }
-                            if( $postData['slotEvent'] != 'freespin' ) 
-                            {
-                                if( !isset($postData['slotEvent']) ) 
-                                {
+                            if ($postData['slotEvent'] != 'freespin') {
+                                if (! isset($postData['slotEvent'])) {
                                     $postData['slotEvent'] = 'bet';
                                 }
                                 $bankSum = $postData['bet'] / 100 * $slotSettings->GetPercent();
@@ -175,107 +153,96 @@ namespace VanguardLTE\Games\BermudaTrianglePTM
                             $winTypeTmp = $slotSettings->GetSpinSettings($postData['slotEvent'], $postData['bet'], $lines);
                             $winType = $winTypeTmp[0];
                             $spinWinLimit = $winTypeTmp[1];
-                            for( $i = 0; $i <= 2000; $i++ ) 
-                            {
+                            for ($i = 0; $i <= 2000; $i++) {
                                 $totalWin = 0;
                                 $lineWins = [];
                                 $cWins = [
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
                                 ];
                                 $cWins2 = [
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
                                 ];
                                 $wild = [''];
                                 $scatter = '';
                                 $reels = $slotSettings->GetReelStrips($winType, $postData['slotEvent']);
-                                for( $k = 0; $k < $lines; $k++ ) 
-                                {
+                                for ($k = 0; $k < $lines; $k++) {
                                     $tmpStringWin = '';
-                                    for( $j = 0; $j < count($slotSettings->SymbolGame); $j++ ) 
-                                    {
+                                    for ($j = 0; $j < count($slotSettings->SymbolGame); $j++) {
                                         $csym = $slotSettings->SymbolGame[$j];
-                                        if( $csym == $scatter || !isset($slotSettings->Paytable['SYM_' . $csym]) ) 
-                                        {
-                                        }
-                                        else
-                                        {
+                                        if ($csym == $scatter || ! isset($slotSettings->Paytable['SYM_'.$csym])) {
+                                        } else {
                                             $s = [];
                                             $s[0] = $reels['reel1'][$linesId[$k][0] - 1];
                                             $s[1] = $reels['reel2'][$linesId[$k][1] - 1];
                                             $s[2] = $reels['reel3'][$linesId[$k][2] - 1];
-                                            if( $s[0] == $csym && $s[1] == $csym && $s[2] == $csym ) 
-                                            {
-                                                $tmpWin = $slotSettings->Paytable['SYM_' . $csym][3] * $betLine;
-                                                if( $cWins[$k] < $tmpWin ) 
-                                                {
+                                            if ($s[0] == $csym && $s[1] == $csym && $s[2] == $csym) {
+                                                $tmpWin = $slotSettings->Paytable['SYM_'.$csym][3] * $betLine;
+                                                if ($cWins[$k] < $tmpWin) {
                                                     $cWins[$k] = $tmpWin;
-                                                    $tmpStringWin = '{"Count":3,"Line":' . $k . ',"Win":' . $cWins[$k] . ',"stepWin":' . ($cWins[$k] + $totalWin + $slotSettings->GetGameData('BermudaTrianglePTMMBonusWin')) . ',"winReel1":[' . ($linesId[$k][0] - 1) . ',"' . $s[0] . '"],"winReel2":[' . ($linesId[$k][1] - 1) . ',"' . $s[1] . '"],"winReel3":[' . ($linesId[$k][2] - 1) . ',"' . $s[2] . '"],"winReel4":["none","none"],"winReel5":["none","none"]}';
+                                                    $tmpStringWin = '{"Count":3,"Line":'.$k.',"Win":'.$cWins[$k].',"stepWin":'.($cWins[$k] + $totalWin + $slotSettings->GetGameData('BermudaTrianglePTMMBonusWin')).',"winReel1":['.($linesId[$k][0] - 1).',"'.$s[0].'"],"winReel2":['.($linesId[$k][1] - 1).',"'.$s[1].'"],"winReel3":['.($linesId[$k][2] - 1).',"'.$s[2].'"],"winReel4":["none","none"],"winReel5":["none","none"]}';
                                                 }
                                             }
-                                            if( in_array($s[0], [
-                                                4, 
-                                                3, 
-                                                1
+                                            if (in_array($s[0], [
+                                                4,
+                                                3,
+                                                1,
                                             ]) && in_array($s[1], [
-                                                4, 
-                                                3, 
-                                                1
+                                                4,
+                                                3,
+                                                1,
                                             ]) && in_array($s[2], [
-                                                4, 
-                                                3, 
-                                                1
-                                            ]) ) 
-                                            {
+                                                4,
+                                                3,
+                                                1,
+                                            ])) {
                                                 $tmpWin = 10 * $betLine;
-                                                if( $cWins[$k] < $tmpWin ) 
-                                                {
+                                                if ($cWins[$k] < $tmpWin) {
                                                     $cWins[$k] = $tmpWin;
-                                                    $tmpStringWin = '{"Count":3,"Line":' . $k . ',"Win":' . $cWins[$k] . ',"stepWin":' . ($cWins[$k] + $totalWin + $slotSettings->GetGameData('BermudaTrianglePTMMBonusWin')) . ',"winReel1":[' . ($linesId[$k][0] - 1) . ',"' . $s[0] . '"],"winReel2":[' . ($linesId[$k][1] - 1) . ',"' . $s[1] . '"],"winReel3":[' . ($linesId[$k][2] - 1) . ',"' . $s[2] . '"],"winReel4":["none","none"],"winReel5":["none","none"]}';
+                                                    $tmpStringWin = '{"Count":3,"Line":'.$k.',"Win":'.$cWins[$k].',"stepWin":'.($cWins[$k] + $totalWin + $slotSettings->GetGameData('BermudaTrianglePTMMBonusWin')).',"winReel1":['.($linesId[$k][0] - 1).',"'.$s[0].'"],"winReel2":['.($linesId[$k][1] - 1).',"'.$s[1].'"],"winReel3":['.($linesId[$k][2] - 1).',"'.$s[2].'"],"winReel4":["none","none"],"winReel5":["none","none"]}';
                                                 }
                                             }
-                                            if( in_array($s[0], [
-                                                0, 
-                                                2
+                                            if (in_array($s[0], [
+                                                0,
+                                                2,
                                             ]) && in_array($s[1], [
-                                                0, 
-                                                2
+                                                0,
+                                                2,
                                             ]) && in_array($s[2], [
-                                                0, 
-                                                2
-                                            ]) ) 
-                                            {
+                                                0,
+                                                2,
+                                            ])) {
                                                 $lwin = [];
                                                 $lwin[1] = 400;
                                                 $lwin[2] = 500;
@@ -283,16 +250,14 @@ namespace VanguardLTE\Games\BermudaTrianglePTM
                                                 $lwin[4] = 700;
                                                 $lwin[5] = 1000;
                                                 $tmpWin = $lwin[$lines] * $betLine;
-                                                if( $cWins[$k] < $tmpWin ) 
-                                                {
+                                                if ($cWins[$k] < $tmpWin) {
                                                     $cWins[$k] = $tmpWin;
-                                                    $tmpStringWin = '{"Count":3,"Line":' . $k . ',"Win":' . $cWins[$k] . ',"stepWin":' . ($cWins[$k] + $totalWin + $slotSettings->GetGameData('BermudaTrianglePTMMBonusWin')) . ',"winReel1":[' . ($linesId[$k][0] - 1) . ',"' . $s[0] . '"],"winReel2":[' . ($linesId[$k][1] - 1) . ',"' . $s[1] . '"],"winReel3":[' . ($linesId[$k][2] - 1) . ',"' . $s[2] . '"],"winReel4":["none","none"],"winReel5":["none","none"]}';
+                                                    $tmpStringWin = '{"Count":3,"Line":'.$k.',"Win":'.$cWins[$k].',"stepWin":'.($cWins[$k] + $totalWin + $slotSettings->GetGameData('BermudaTrianglePTMMBonusWin')).',"winReel1":['.($linesId[$k][0] - 1).',"'.$s[0].'"],"winReel2":['.($linesId[$k][1] - 1).',"'.$s[1].'"],"winReel3":['.($linesId[$k][2] - 1).',"'.$s[2].'"],"winReel4":["none","none"],"winReel5":["none","none"]}';
                                                 }
                                             }
                                         }
                                     }
-                                    if( $cWins[$k] > 0 && $tmpStringWin != '' ) 
-                                    {
+                                    if ($cWins[$k] > 0 && $tmpStringWin != '') {
                                         array_push($lineWins, $tmpStringWin);
                                         $totalWin += $cWins[$k];
                                     }
@@ -300,129 +265,92 @@ namespace VanguardLTE\Games\BermudaTrianglePTM
                                 $scattersWin = 0;
                                 $scattersStr = '{';
                                 $scattersCount = 0;
-                                if( $scattersCount >= 3 && $slotSettings->slotBonus ) 
-                                {
+                                if ($scattersCount >= 3 && $slotSettings->slotBonus) {
                                     $scattersStr .= '"scattersType":"bonus",';
-                                }
-                                else if( $scattersWin > 0 ) 
-                                {
+                                } elseif ($scattersWin > 0) {
                                     $scattersStr .= '"scattersType":"win",';
-                                }
-                                else
-                                {
+                                } else {
                                     $scattersStr .= '"scattersType":"none",';
                                 }
-                                $scattersStr .= ('"scattersWin":' . $scattersWin . '}');
+                                $scattersStr .= ('"scattersWin":'.$scattersWin.'}');
                                 $totalWin += $scattersWin;
-                                if( $slotSettings->MaxWin < ($totalWin * $slotSettings->CurrentDenom) ) 
-                                {
-                                }
-                                else
-                                {
-                                    if( $i > 1000 ) 
-                                    {
+                                if ($slotSettings->MaxWin < ($totalWin * $slotSettings->CurrentDenom)) {
+                                } else {
+                                    if ($i > 1000) {
                                         $winType = 'none';
                                     }
-                                    if( $i > 1500 ) 
-                                    {
-                                        $response = '{"responseEvent":"error","responseType":"' . $postData['slotEvent'] . '","serverResponse":"' . $totalWin . ' Bad Reel Strip"}';
-                                        exit( $response );
+                                    if ($i > 1500) {
+                                        $response = '{"responseEvent":"error","responseType":"'.$postData['slotEvent'].'","serverResponse":"'.$totalWin.' Bad Reel Strip"}';
+                                        exit($response);
                                     }
                                     $minWin = $slotSettings->GetRandomPay();
-                                    if( $i > 700 ) 
-                                    {
+                                    if ($i > 700) {
                                         $minWin = 0;
                                     }
-                                    if( $slotSettings->increaseRTP && $winType == 'win' && $totalWin < ($minWin * $postData['bet']) ) 
-                                    {
-                                    }
-                                    else
-                                    {
-                                        if( $i > 1500 ) 
-                                        {
-                                            $response = '{"responseEvent":"error","responseType":"' . $postData['slotEvent'] . '","serverResponse":"Bad Reel Strip"}';
-                                            exit( $response );
+                                    if ($slotSettings->increaseRTP && $winType == 'win' && $totalWin < ($minWin * $postData['bet'])) {
+                                    } else {
+                                        if ($i > 1500) {
+                                            $response = '{"responseEvent":"error","responseType":"'.$postData['slotEvent'].'","serverResponse":"Bad Reel Strip"}';
+                                            exit($response);
                                         }
-                                        if( $scattersCount >= 3 && $winType != 'bonus' ) 
-                                        {
-                                        }
-                                        else if( $totalWin <= $spinWinLimit && $winType == 'bonus' ) 
-                                        {
+                                        if ($scattersCount >= 3 && $winType != 'bonus') {
+                                        } elseif ($totalWin <= $spinWinLimit && $winType == 'bonus') {
                                             $cBank = $slotSettings->GetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : ''));
-                                            if( $cBank < $spinWinLimit ) 
-                                            {
+                                            if ($cBank < $spinWinLimit) {
                                                 $spinWinLimit = $cBank;
-                                            }
-                                            else
-                                            {
+                                            } else {
                                                 break;
                                             }
-                                        }
-                                        else if( $totalWin > 0 && $totalWin <= $spinWinLimit && $winType == 'win' ) 
-                                        {
+                                        } elseif ($totalWin > 0 && $totalWin <= $spinWinLimit && $winType == 'win') {
                                             $cBank = $slotSettings->GetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : ''));
-                                            if( $cBank < $spinWinLimit ) 
-                                            {
+                                            if ($cBank < $spinWinLimit) {
                                                 $spinWinLimit = $cBank;
-                                            }
-                                            else
-                                            {
+                                            } else {
                                                 break;
                                             }
-                                        }
-                                        else if( $totalWin == 0 && $winType == 'none' ) 
-                                        {
+                                        } elseif ($totalWin == 0 && $winType == 'none') {
                                             break;
                                         }
                                     }
                                 }
                             }
-                            if( $totalWin > 0 ) 
-                            {
+                            if ($totalWin > 0) {
                                 $slotSettings->SetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : ''), -1 * $totalWin);
                                 $slotSettings->SetBalance($totalWin);
                             }
                             $reportWin = $totalWin;
-                            if( $postData['slotEvent'] == 'freespin' ) 
-                            {
+                            if ($postData['slotEvent'] == 'freespin') {
                                 $slotSettings->SetGameData('BermudaTrianglePTMMBonusWin', $slotSettings->GetGameData('BermudaTrianglePTMMBonusWin') + $totalWin);
                                 $slotSettings->SetGameData('BermudaTrianglePTMMTotalWin', $totalWin);
-                            }
-                            else
-                            {
+                            } else {
                                 $slotSettings->SetGameData('BermudaTrianglePTMMTotalWin', $totalWin);
                             }
-                            if( $scattersCount >= 3 ) 
-                            {
-                                if( $slotSettings->GetGameData('BermudaTrianglePTMMFreeGames') > 0 ) 
-                                {
+                            if ($scattersCount >= 3) {
+                                if ($slotSettings->GetGameData('BermudaTrianglePTMMFreeGames') > 0) {
                                     $slotSettings->SetGameData('BermudaTrianglePTMMBonusWin', $totalWin);
                                     $slotSettings->SetGameData('BermudaTrianglePTMMFreeGames', $slotSettings->GetGameData('BermudaTrianglePTMMFreeGames') + $slotSettings->slotFreeCount);
-                                }
-                                else
-                                {
+                                } else {
                                     $slotSettings->SetGameData('BermudaTrianglePTMMFreeStartWin', $totalWin);
                                     $slotSettings->SetGameData('BermudaTrianglePTMMBonusWin', $totalWin);
                                     $slotSettings->SetGameData('BermudaTrianglePTMMFreeGames', $slotSettings->slotFreeCount);
                                 }
                             }
                             $balanceInCents = sprintf('%01.2f', $slotSettings->GetBalance()) * 100;
-                            $result_tmp[] = '3:::{"data":{"credit":' . $balanceInCents . ',"results":[' . implode(',', $reels['rp']) . '],"windowId":"Adbmao"},"ID":40022,"umid":35}';
-                            $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"' . $slotSettings->slotCurrency . '","balanceInCents":' . $balanceInCents . ',"deltaBalanceInCents":1},"ID":40085}';
-                            $jsSpin = '' . json_encode($reels) . '';
-                            $jsJack = '' . json_encode($slotSettings->Jackpots) . '';
+                            $result_tmp[] = '3:::{"data":{"credit":'.$balanceInCents.',"results":['.implode(',', $reels['rp']).'],"windowId":"Adbmao"},"ID":40022,"umid":35}';
+                            $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"'.$slotSettings->slotCurrency.'","balanceInCents":'.$balanceInCents.',"deltaBalanceInCents":1},"ID":40085}';
+                            $jsSpin = ''.json_encode($reels).'';
+                            $jsJack = ''.json_encode($slotSettings->Jackpots).'';
                             $winString = implode(',', $lineWins);
-                            $response = '{"responseEvent":"spin","responseType":"' . $postData['slotEvent'] . '","serverResponse":{"linesArr":[' . implode(',', $postData['lines']) . '],"slotLines":' . $lines . ',"slotBet":' . $betLine . ',"totalFreeGames":' . $slotSettings->GetGameData('BermudaTrianglePTMMFreeGames') . ',"currentFreeGames":' . $slotSettings->GetGameData('BermudaTrianglePTMMCurrentFreeGame') . ',"Balance":' . $slotSettings->GetBalance() . ',"afterBalance":' . $slotSettings->GetBalance() . ',"bonusWin":' . $slotSettings->GetGameData('BermudaTrianglePTMMBonusWin') . ',"freeStartWin":' . $slotSettings->GetGameData('BermudaTrianglePTMMFreeStartWin') . ',"totalWin":' . $totalWin . ',"winLines":[' . $winString . '],"bonusInfo":' . $scattersStr . ',"Jackpots":' . $jsJack . ',"reelsSymbols":' . $jsSpin . '}}';
+                            $response = '{"responseEvent":"spin","responseType":"'.$postData['slotEvent'].'","serverResponse":{"linesArr":['.implode(',', $postData['lines']).'],"slotLines":'.$lines.',"slotBet":'.$betLine.',"totalFreeGames":'.$slotSettings->GetGameData('BermudaTrianglePTMMFreeGames').',"currentFreeGames":'.$slotSettings->GetGameData('BermudaTrianglePTMMCurrentFreeGame').',"Balance":'.$slotSettings->GetBalance().',"afterBalance":'.$slotSettings->GetBalance().',"bonusWin":'.$slotSettings->GetGameData('BermudaTrianglePTMMBonusWin').',"freeStartWin":'.$slotSettings->GetGameData('BermudaTrianglePTMMFreeStartWin').',"totalWin":'.$totalWin.',"winLines":['.$winString.'],"bonusInfo":'.$scattersStr.',"Jackpots":'.$jsJack.',"reelsSymbols":'.$jsSpin.'}}';
                             $slotSettings->SaveLogReport($response, $betLine, $lines, $reportWin, $postData['slotEvent']);
                         }
-                        switch( $umid ) 
-                        {
+                        switch ($umid) {
                             case '31031':
                                 $result_tmp[] = '3:::{"data":{"urlList":[{"urlType":"mobile_login","url":"https://login.loc/register","priority":1},{"urlType":"mobile_support","url":"https://ww2.loc/support","priority":1},{"urlType":"playerprofile","url":"","priority":1},{"urlType":"playerprofile","url":"","priority":10},{"urlType":"gambling_commission","url":"","priority":1},{"urlType":"cashier","url":"","priority":1},{"urlType":"cashier","url":"","priority":1}]},"ID":100}';
                                 break;
                             case '10001':
                                 $result_tmp[] = '3:::{"data":{"typeBalance":2,"balanceInCents":0},"ID":40083,"umid":3}';
-                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"' . $slotSettings->slotCurrency . '","balanceInCents":' . $balanceInCents . ',"deltaBalanceInCents":0},"ID":40083,"umid":4}';
+                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"'.$slotSettings->slotCurrency.'","balanceInCents":'.$balanceInCents.',"deltaBalanceInCents":0},"ID":40083,"umid":4}';
                                 $result_tmp[] = '3:::{"data":{"commandId":13218,"params":["0","null"]},"ID":50001,"umid":5}';
                                 $result_tmp[] = '3:::{"token":{"secretKey":"","currency":"USD","balance":0,"loginTime":""},"ID":10002,"umid":7}';
                                 break;
@@ -433,8 +361,8 @@ namespace VanguardLTE\Games\BermudaTrianglePTM
                                 $result_tmp[] = '3:::{"data":{"commandId":13981,"params":["0","1"]},"ID":50001,"umid":12}';
                                 $result_tmp[] = '3:::{"data":{"commandId":14080,"params":["0","0"]},"ID":50001,"umid":14}';
                                 $result_tmp[] = '3:::{"data":{"keyValueCount":5,"elementsPerKey":1,"params":["10","1","11","500","12","1","13","0","14","0"]},"ID":40716,"umid":15}';
-                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"' . $slotSettings->slotCurrency . '","balanceInCents":' . $balanceInCents . ',"deltaBalanceInCents":0},"ID":40083,"umid":16}';
-                                $result_tmp[] = '3:::{"balanceInfo":{"clientType":"casino","totalBalance":' . $balanceInCents . ',"currency":"' . $slotSettings->slotCurrency . '","balanceChange":' . $balanceInCents . '},"ID":10006,"umid":17}';
+                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"'.$slotSettings->slotCurrency.'","balanceInCents":'.$balanceInCents.',"deltaBalanceInCents":0},"ID":40083,"umid":16}';
+                                $result_tmp[] = '3:::{"balanceInfo":{"clientType":"casino","totalBalance":'.$balanceInCents.',"currency":"'.$slotSettings->slotCurrency.'","balanceChange":'.$balanceInCents.'},"ID":10006,"umid":17}';
                                 $result_tmp[] = '3:::{"data":{},"ID":40292,"umid":18}';
                                 break;
                             case '10010':
@@ -443,49 +371,45 @@ namespace VanguardLTE\Games\BermudaTrianglePTM
                                 break;
                             case '40066':
                                 $gameBets = $slotSettings->Bet;
-                                for( $i = 0; $i < count($gameBets); $i++ ) 
-                                {
+                                for ($i = 0; $i < count($gameBets); $i++) {
                                     $gameBets[$i] = $gameBets[$i] * 100;
                                 }
-                                $result_tmp[] = '3:::{"data":{"funNoticeGames":0,"funNoticePayouts":0,"gameGroup":"pmn","minBet":0,"maxBet":0,"minPosBet":0,"maxPosBet":50000,"coinSizes":[' . implode(',', $gameBets) . ']},"ID":40025,"umid":21}';
+                                $result_tmp[] = '3:::{"data":{"funNoticeGames":0,"funNoticePayouts":0,"gameGroup":"pmn","minBet":0,"maxBet":0,"minPosBet":0,"maxPosBet":50000,"coinSizes":['.implode(',', $gameBets).']},"ID":40025,"umid":21}';
                                 break;
                             case '40036':
-                                $slotSettings->SetGameData($slotSettings->slotId . 'BonusWin', 0);
-                                $slotSettings->SetGameData($slotSettings->slotId . 'FreeGames', 0);
-                                $slotSettings->SetGameData($slotSettings->slotId . 'CurrentFreeGame', 0);
-                                $slotSettings->SetGameData($slotSettings->slotId . 'TotalWin', 0);
-                                $slotSettings->SetGameData($slotSettings->slotId . 'FreeBalance', 0);
+                                $slotSettings->SetGameData($slotSettings->slotId.'BonusWin', 0);
+                                $slotSettings->SetGameData($slotSettings->slotId.'FreeGames', 0);
+                                $slotSettings->SetGameData($slotSettings->slotId.'CurrentFreeGame', 0);
+                                $slotSettings->SetGameData($slotSettings->slotId.'TotalWin', 0);
+                                $slotSettings->SetGameData($slotSettings->slotId.'FreeBalance', 0);
                                 $lastEvent = $slotSettings->GetHistory();
-                                $slotSettings->SetGameData($slotSettings->slotId . 'brokenGames', '');
-                                if( $lastEvent != 'NULL' ) 
-                                {
-                                    $slotSettings->SetGameData($slotSettings->slotId . 'BonusWin', $lastEvent->serverResponse->bonusWin);
-                                    $slotSettings->SetGameData($slotSettings->slotId . 'FreeStartWin', $lastEvent->serverResponse->freeStartWin);
-                                    $slotSettings->SetGameData($slotSettings->slotId . 'FreeGames', $lastEvent->serverResponse->totalFreeGames);
-                                    $slotSettings->SetGameData($slotSettings->slotId . 'CurrentFreeGame', $lastEvent->serverResponse->currentFreeGames);
-                                    $slotSettings->SetGameData($slotSettings->slotId . 'TotalWin', $lastEvent->serverResponse->totalWin);
-                                    $slotSettings->SetGameData($slotSettings->slotId . 'FreeBalance', $lastEvent->serverResponse->Balance);
-                                    $slotSettings->SetGameData($slotSettings->slotId . 'LinesArr', $lastEvent->serverResponse->linesArr);
-                                    $slotSettings->SetGameData($slotSettings->slotId . 'Bet', $lastEvent->serverResponse->slotBet);
-                                    if( $slotSettings->GetGameData($slotSettings->slotId . 'CurrentFreeGame') < $slotSettings->GetGameData($slotSettings->slotId . 'FreeGames') && $slotSettings->GetGameData($slotSettings->slotId . 'FreeGames') > 0 ) 
-                                    {
-                                        $slotSettings->SetGameData($slotSettings->slotId . 'brokenGames', 'pmn');
+                                $slotSettings->SetGameData($slotSettings->slotId.'brokenGames', '');
+                                if ($lastEvent != 'NULL') {
+                                    $slotSettings->SetGameData($slotSettings->slotId.'BonusWin', $lastEvent->serverResponse->bonusWin);
+                                    $slotSettings->SetGameData($slotSettings->slotId.'FreeStartWin', $lastEvent->serverResponse->freeStartWin);
+                                    $slotSettings->SetGameData($slotSettings->slotId.'FreeGames', $lastEvent->serverResponse->totalFreeGames);
+                                    $slotSettings->SetGameData($slotSettings->slotId.'CurrentFreeGame', $lastEvent->serverResponse->currentFreeGames);
+                                    $slotSettings->SetGameData($slotSettings->slotId.'TotalWin', $lastEvent->serverResponse->totalWin);
+                                    $slotSettings->SetGameData($slotSettings->slotId.'FreeBalance', $lastEvent->serverResponse->Balance);
+                                    $slotSettings->SetGameData($slotSettings->slotId.'LinesArr', $lastEvent->serverResponse->linesArr);
+                                    $slotSettings->SetGameData($slotSettings->slotId.'Bet', $lastEvent->serverResponse->slotBet);
+                                    if ($slotSettings->GetGameData($slotSettings->slotId.'CurrentFreeGame') < $slotSettings->GetGameData($slotSettings->slotId.'FreeGames') && $slotSettings->GetGameData($slotSettings->slotId.'FreeGames') > 0) {
+                                        $slotSettings->SetGameData($slotSettings->slotId.'brokenGames', 'pmn');
                                     }
                                 }
-                                $result_tmp[] = '3:::{"data":{"brokenGames":["' . $slotSettings->GetGameData($slotSettings->slotId . 'brokenGames') . '"],"windowId":"SuJLru"},"ID":40037,"umid":22}';
+                                $result_tmp[] = '3:::{"data":{"brokenGames":["'.$slotSettings->GetGameData($slotSettings->slotId.'brokenGames').'"],"windowId":"SuJLru"},"ID":40037,"umid":22}';
                                 break;
                             case '40020':
                                 $result_tmp[] = '3:::{"data":{"typeBalance":2,"balanceInCents":0},"ID":40085}';
                                 $result_tmp[] = '3:::{"data":{"typeBalance":1,"balanceInCents":0},"ID":40085}';
-                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"' . $slotSettings->slotCurrency . '","balanceInCents":' . $balanceInCents . ',"deltaBalanceInCents":0},"ID":40085}';
-                                $result_tmp[] = '3:::{"data":{"credit":' . $balanceInCents . ',"windowId":"SuJLru"},"ID":40026,"umid":28}';
-                                if( $slotSettings->GetGameData($slotSettings->slotId . 'brokenGames') != '' ) 
-                                {
-                                    $result_tmp[] = '3:::{"data":{"freeSpinData":{"numFreeSpins":' . ($slotSettings->GetGameData($slotSettings->slotId . 'FreeGames') - $slotSettings->GetGameData($slotSettings->slotId . 'CurrentFreeGame')) . ',"coinsize":' . ($slotSettings->GetGameData($slotSettings->slotId . 'Bet') * 100) . ',"rows":[' . implode(',', $slotSettings->GetGameData($slotSettings->slotId . 'LinesArr')) . '],"gamewin":' . ($slotSettings->GetGameData($slotSettings->slotId . 'FreeStartWin') * 100) . ',"freespinwin":' . ($slotSettings->GetGameData($slotSettings->slotId . 'BonusWin') * 100) . ',"coins":1,"multiplier":3,"mode":1,"startBonus":1},"windowId":"MT24g5"},"ID":40752,"umid":29}';
+                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"'.$slotSettings->slotCurrency.'","balanceInCents":'.$balanceInCents.',"deltaBalanceInCents":0},"ID":40085}';
+                                $result_tmp[] = '3:::{"data":{"credit":'.$balanceInCents.',"windowId":"SuJLru"},"ID":40026,"umid":28}';
+                                if ($slotSettings->GetGameData($slotSettings->slotId.'brokenGames') != '') {
+                                    $result_tmp[] = '3:::{"data":{"freeSpinData":{"numFreeSpins":'.($slotSettings->GetGameData($slotSettings->slotId.'FreeGames') - $slotSettings->GetGameData($slotSettings->slotId.'CurrentFreeGame')).',"coinsize":'.($slotSettings->GetGameData($slotSettings->slotId.'Bet') * 100).',"rows":['.implode(',', $slotSettings->GetGameData($slotSettings->slotId.'LinesArr')).'],"gamewin":'.($slotSettings->GetGameData($slotSettings->slotId.'FreeStartWin') * 100).',"freespinwin":'.($slotSettings->GetGameData($slotSettings->slotId.'BonusWin') * 100).',"coins":1,"multiplier":3,"mode":1,"startBonus":1},"windowId":"MT24g5"},"ID":40752,"umid":29}';
                                 }
                                 break;
                             case '48300':
-                                $result_tmp[] = '3:::{"balanceInfo":{"clientType":"casino","totalBalance":' . $balanceInCents . ',"currency":"' . $slotSettings->slotCurrency . '","balanceChange":0},"ID":10006,"umid":30}';
+                                $result_tmp[] = '3:::{"balanceInfo":{"clientType":"casino","totalBalance":'.$balanceInCents.',"currency":"'.$slotSettings->slotCurrency.'","balanceChange":0},"ID":10006,"umid":30}';
                                 $result_tmp[] = '3:::{"data":{"waitingLogins":[],"waitingAlerts":[],"waitingDialogs":[],"waitingDialogMessages":[],"waitingToasterMessages":[]},"ID":48301,"umid":31}';
                                 break;
                         }
@@ -493,27 +417,21 @@ namespace VanguardLTE\Games\BermudaTrianglePTM
                         $slotSettings->SaveGameData();
                         $slotSettings->SaveGameDataStatic();
                         echo $response;
-                    }
-                    catch( \Exception $e ) 
-                    {
-                        if( isset($slotSettings) ) 
-                        {
+                    } catch (\Exception $e) {
+                        if (isset($slotSettings)) {
                             $slotSettings->InternalErrorSilent($e);
-                        }
-                        else
-                        {
+                        } else {
                             $strLog = '';
                             $strLog .= "\n";
-                            $strLog .= ('{"responseEvent":"error","responseType":"' . $e . '","serverResponse":"InternalError","request":' . json_encode($_REQUEST) . ',"requestRaw":' . file_get_contents('php://input') . '}');
+                            $strLog .= ('{"responseEvent":"error","responseType":"'.$e.'","serverResponse":"InternalError","request":'.json_encode($_REQUEST).',"requestRaw":'.file_get_contents('php://input').'}');
                             $strLog .= "\n";
                             $strLog .= ' ############################################### ';
                             $strLog .= "\n";
                             $slg = '';
-                            if( file_exists(storage_path('logs/') . 'GameInternal.log') ) 
-                            {
-                                $slg = file_get_contents(storage_path('logs/') . 'GameInternal.log');
+                            if (file_exists(storage_path('logs/').'GameInternal.log')) {
+                                $slg = file_get_contents(storage_path('logs/').'GameInternal.log');
                             }
-                            file_put_contents(storage_path('logs/') . 'GameInternal.log', $slg . $strLog);
+                            file_put_contents(storage_path('logs/').'GameInternal.log', $slg.$strLog);
                         }
                     }
                 }, 5);

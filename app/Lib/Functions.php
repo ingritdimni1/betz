@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Omen
@@ -11,31 +12,33 @@ namespace VanguardLTE\Lib;
 use VanguardLTE\Progress;
 use VanguardLTE\Shop;
 
-class Functions {
-
-    public static function refunds($refunds, $shop_id, $rating){
+class Functions
+{
+    public static function refunds($refunds, $shop_id, $rating)
+    {
 
         $shop = Shop::find($shop_id);
 
-        if( !($shop && $shop->progress_active) ){
+        if (! ($shop && $shop->progress_active)) {
             return 0;
         }
 
         $return = Progress::where(['shop_id' => $shop_id, 'rating' => $rating])
-            //->whereRaw("'".$refunds."' BETWEEN min AND max")
+            // ->whereRaw("'".$refunds."' BETWEEN min AND max")
             ->first();
-        if( $return ){
-            $sum = floatval($return->percent)/100 * $refunds;
-        } else{
+        if ($return) {
+            $sum = floatval($return->percent) / 100 * $refunds;
+        } else {
             $sum = 0;
         }
 
         return $sum;
     }
 
-    public static function remove_emoji($string){
+    public static function remove_emoji($string)
+    {
 
-        $clean_text = "";
+        $clean_text = '';
 
         // Match Emoticons
         $regexEmoticons = '/[\x{1F600}-\x{1F64F}]/u';
@@ -77,5 +80,4 @@ class Functions {
         return $clean_text;
 
     }
-
 }

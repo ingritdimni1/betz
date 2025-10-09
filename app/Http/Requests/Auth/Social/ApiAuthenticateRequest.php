@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Http\Requests\Auth\Social
 {
     class ApiAuthenticateRequest extends \VanguardLTE\Http\Requests\Request
@@ -7,10 +8,10 @@ namespace VanguardLTE\Http\Requests\Auth\Social
         {
             return [
                 'network' => [
-                    'required', 
-                    \Illuminate\Validation\Rule::in(config('auth.social.providers'))
-                ], 
-                'social_token' => 'required'
+                    'required',
+                    \Illuminate\Validation\Rule::in(config('auth.social.providers')),
+                ],
+                'social_token' => 'required',
             ];
         }
     }

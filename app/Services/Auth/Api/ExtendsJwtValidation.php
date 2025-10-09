@@ -20,7 +20,7 @@ trait ExtendsJwtValidation
         $id = $payload->get('sub');
 
         if (! $this->jtiIsValid($jti, $id)) {
-            throw new TokenInvalidException("Invalid jti claim.");
+            throw new TokenInvalidException('Invalid jti claim.');
         }
 
         return $payload;
@@ -34,8 +34,7 @@ trait ExtendsJwtValidation
      * Remember, the jti claim is not a token itself that is being used
      * for API authentication. It is just a unique string (more like token ID)
      * attached to each JWT token to allow us to easily revoke that JWT token later.
-     * @param $jti
-     * @param $userId
+     *
      * @return bool
      */
     private function jtiIsValid($jti, $userId)
@@ -48,7 +47,6 @@ trait ExtendsJwtValidation
 
             $this->jtiIsValid = $count == 1;
         }
-
 
         return $this->jtiIsValid;
     }

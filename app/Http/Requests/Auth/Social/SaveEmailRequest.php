@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Http\Requests\Auth\Social
 {
     class SaveEmailRequest extends \VanguardLTE\Http\Requests\Request

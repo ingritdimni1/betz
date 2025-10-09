@@ -3,9 +3,9 @@
 namespace VanguardLTE\Repositories\Session;
 
 use Carbon\Carbon;
+use DB;
 use Jenssegers\Agent\Agent;
 use VanguardLTE\Repositories\User\UserRepository;
-use DB;
 
 class DbSession implements SessionRepository
 {
@@ -13,6 +13,7 @@ class DbSession implements SessionRepository
      * @var UserRepository
      */
     private $users;
+
     /**
      * @var Agent
      */
@@ -20,8 +21,6 @@ class DbSession implements SessionRepository
 
     /**
      * DbSession constructor.
-     * @param UserRepository $users
-     * @param Agent $agent
      */
     public function __construct(UserRepository $users, Agent $agent)
     {

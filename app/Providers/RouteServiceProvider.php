@@ -2,26 +2,26 @@
 
 namespace VanguardLTE\Providers;
 
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Route;
-use VanguardLTE\Permission;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use VanguardLTE\Repositories\Role\RoleRepository;
 use VanguardLTE\Repositories\Session\SessionRepository;
 use VanguardLTE\Repositories\User\UserRepository;
-use Illuminate\Routing\Router;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RouteServiceProvider extends ServiceProvider
 {
     /**
      * This namespace is applied to the controller routes in your web routes file.
      * In addition, it is set as the URL generator's root namespace.
+     *
      * @var string
      */
     protected $webNamespace = 'VanguardLTE\Http\Controllers\Web';
 
     /**
      * This namespace is applied to the controller routes in your api routes file.
+     *
      * @var string
      */
     protected $apiNamespace = 'VanguardLTE\Http\Controllers\Api';
@@ -47,7 +47,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map()
     {
-        if ($this->app['config']->get('auth.expose_api')) {			
+        if ($this->app['config']->get('auth.expose_api')) {
             $this->mapApiRoutes();
         }
 
@@ -111,7 +111,7 @@ class RouteServiceProvider extends ServiceProvider
                 return $object;
             }
 
-            throw new NotFoundHttpException("Resource not found.");
+            throw new NotFoundHttpException('Resource not found.');
         });
     }
 }

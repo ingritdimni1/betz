@@ -2,15 +2,15 @@
 
 namespace VanguardLTE\Presenters;
 
-use VanguardLTE\Support\Enum\UserStatus;
 use Illuminate\Support\Str;
 use Laracasts\Presenter\Presenter;
+use VanguardLTE\Support\Enum\UserStatus;
 
 class UserPresenter extends Presenter
 {
     public function name()
     {
-        return sprintf("%s %s", $this->entity->first_name, $this->entity->last_name);
+        return sprintf('%s %s', $this->entity->first_name, $this->entity->last_name);
     }
 
     public function avatar()

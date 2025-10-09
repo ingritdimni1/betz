@@ -2,9 +2,7 @@
 
 namespace VanguardLTE\Transformers;
 
-use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
-use VanguardLTE\User;
 
 class SessionTransformer extends TransformerAbstract
 {
@@ -18,7 +16,7 @@ class SessionTransformer extends TransformerAbstract
             'browser' => $session->browser,
             'platform' => $session->platform,
             'device' => $session->device,
-            'last_activity' => (string) $session->last_activity
+            'last_activity' => (string) $session->last_activity,
         ];
     }
 }

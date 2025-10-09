@@ -3,13 +3,10 @@
 namespace VanguardLTE\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-
-use VanguardLTE\Payment;
-use VanguardLTE\User;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class IPNHandlerCoinPaymentJob implements ShouldQueue
 {
@@ -22,7 +19,8 @@ class IPNHandlerCoinPaymentJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($trx) {
+    public function __construct($trx)
+    {
         $this->trx = $trx;
     }
 
@@ -31,9 +29,10 @@ class IPNHandlerCoinPaymentJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle() {
+    public function handle()
+    {
         // Do something...
-				
+
         /* DATA RESPONSE
           $this->trx['payment_id'];
           $this->trx['payment_address'];
