@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Http\Requests\Activity
 {
     class GetActivitiesRequest extends \VanguardLTE\Http\Requests\Request
@@ -7,6 +8,7 @@ namespace VanguardLTE\Http\Requests\Activity
         {
             return ['per_page' => 'integer|max:100'];
         }
+
         public function messages()
         {
             return ['per_page.max' => 'Maximum number of records per page is 100.'];

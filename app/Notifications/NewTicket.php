@@ -2,8 +2,8 @@
 
 namespace VanguardLTE\Notifications;
 
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 
 class NewTicket extends Notification
@@ -44,13 +44,11 @@ class NewTicket extends Notification
      */
     public function toMail($notifiable)
     {
-        $subject = "New Ticket #". $this->ticket['id'];
+        $subject = 'New Ticket #'.$this->ticket['id'];
 
-
-        //if( !$this->ticket['admin'] ){
-            //$notifiable->email = setting('tickets_email');
-        //}
-
+        // if( !$this->ticket['admin'] ){
+        // $notifiable->email = setting('tickets_email');
+        // }
 
         return (new MailMessage)
             ->subject($subject)

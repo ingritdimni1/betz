@@ -6,7 +6,7 @@ interface SessionRepository
 {
     /**
      * Find session by id.
-     * @param $sessionId
+     *
      * @return mixed
      */
     public function find($sessionId);
@@ -14,7 +14,6 @@ interface SessionRepository
     /**
      * Get all active sessions for specified user.
      *
-     * @param $userId
      * @return mixed
      */
     public function getUserSessions($userId);
@@ -22,14 +21,13 @@ interface SessionRepository
     /**
      * Invalidate specified session for provided user
      *
-     * @param $sessionId
      * @return mixed
      */
     public function invalidateSession($sessionId);
 
     /**
      * Invalidate all sessions for user with given id.
-     * @param $userId
+     *
      * @return mixed
      */
     public function invalidateAllSessionsForUser($userId);

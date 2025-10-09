@@ -5,26 +5,26 @@ return [
     /*
     |--------------------------------------------------------------------------
     | Piastrix
-    |--------------------------------------------------------------------------    
+    |--------------------------------------------------------------------------
     */
 
     'piastrix' => [
         'id' => '',
-		'key' => ''
+        'key' => '',
     ],
-	
+
     'interkassa' => [
         'fields' => ['shop_id', 'token'],
         'required' => ['shop_id', 'token'],
         'id' => '',
-        'token' => ''
+        'token' => '',
     ],
 
     'coinbase' => [
         'fields' => ['api_key', 'webhook_key'],
         'required' => ['api_key', 'webhook_key'],
         'api_key' => '',
-        'webhook_key' => ''
+        'webhook_key' => '',
     ],
 
     'btcpayserver' => [
@@ -35,7 +35,7 @@ return [
         'password' => '',
         'token' => '',
         'user_token' => '',
-        'store_id' => ''
-    ]
+        'store_id' => '',
+    ],
 
 ];

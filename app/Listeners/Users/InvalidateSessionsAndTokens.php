@@ -2,12 +2,8 @@
 
 namespace VanguardLTE\Listeners\Users;
 
-use Carbon\Carbon;
-use Illuminate\Contracts\Auth\Guard;
 use VanguardLTE\Events\User\Banned;
-use VanguardLTE\Events\User\LoggedIn;
 use VanguardLTE\Repositories\Session\SessionRepository;
-use VanguardLTE\Repositories\User\UserRepository;
 use VanguardLTE\Services\Auth\Api\Token;
 
 class InvalidateSessionsAndTokens
@@ -25,7 +21,6 @@ class InvalidateSessionsAndTokens
     /**
      * Handle the event.
      *
-     * @param Banned $event
      * @return void
      */
     public function handle(Banned $event)

@@ -288,7 +288,7 @@ return [
     'you_have_to_accept_tos' => 'Morate prihvatiti pravila korišćenja.',
     'permission_already_exists' => 'Dozvola sa ovim imenom već postoji u sistemu!',
 
-    //Emails
+    // Emails
     'hi' => 'Zdravo',
     'registration_confirmation' => 'Potvrda Registracije',
     'new_user_was_registered_on' => 'Novi korisnik je upravo napravio nalog na :app web sajtu.',
@@ -327,5 +327,5 @@ return [
     'unknown' => 'Nepoznato',
     'device' => 'Uređaj',
     'browser' => 'Pretraživač',
-    'invalid_social_auth' => "Došlo je do problema prilikom autentifikacije. Molimo pokušajte ponovo."
+    'invalid_social_auth' => 'Došlo je do problema prilikom autentifikacije. Molimo pokušajte ponovo.',
 ];

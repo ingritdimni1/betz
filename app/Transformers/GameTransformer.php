@@ -3,9 +3,6 @@
 namespace VanguardLTE\Transformers;
 
 use League\Fractal\TransformerAbstract;
-use VanguardLTE\JPG;
-use VanguardLTE\Repositories\Country\CountryRepository;
-use VanguardLTE\Repositories\Role\RoleRepository;
 use VanguardLTE\Game;
 
 class GameTransformer extends TransformerAbstract
@@ -20,9 +17,9 @@ class GameTransformer extends TransformerAbstract
             'category' => $game->categories->pluck('category_id')->toArray(),
             'device' => $game->device,
             'denomination' => $game->denomination,
-			'view' => $game->view,
+            'view' => $game->view,
             'label' => $game->label,
-            'jpg' => $game->jackpot ? $game->jackpot->get(['name', 'balance']) : ''
+            'jpg' => $game->jackpot ? $game->jackpot->get(['name', 'balance']) : '',
         ];
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Support\Str;						   
+use Illuminate\Support\Str;
+
 if (! function_exists('settings')) {
     /**
      * Get / set the specified settings value.
@@ -32,10 +33,11 @@ function decoded($str)
 
 function hpRand($digit = 4)
 {
-    return substr(rand(0, 12345) . strrev(time()), 0, $digit);
+    return substr(rand(0, 12345).strrev(time()), 0, $digit);
 }
 function hpRandStr($digit = 4)
 {
     $random = Str::random($digit);
+
     return $random;
 }

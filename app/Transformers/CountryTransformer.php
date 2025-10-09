@@ -24,9 +24,9 @@ class CountryTransformer extends TransformerAbstract
             'iso_3166_3' => $country->iso_3166_3,
             'region_code' => (int) $country->region_code,
             'sub_region_code' => (int) $country->sub_region_code,
-            'eea' => (boolean) $country->eea,
+            'eea' => (bool) $country->eea,
             'calling_code' => (int) $country->calling_code,
-            'flag' => $country->flag ? url("flags/{$country->flag}") : null
+            'flag' => $country->flag ? url("flags/{$country->flag}") : null,
         ];
     }
 }

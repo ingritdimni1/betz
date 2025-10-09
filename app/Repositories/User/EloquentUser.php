@@ -2,21 +2,19 @@
 
 namespace VanguardLTE\Repositories\User;
 
+use Carbon\Carbon;
 use VanguardLTE\Repositories\Role\RoleRepository;
 use VanguardLTE\Role;
 use VanguardLTE\Services\Upload\UserAvatarManager;
 use VanguardLTE\User;
-use Carbon\Carbon;
-use DB;
-use Illuminate\Database\SQLiteConnection;
 
 class EloquentUser implements UserRepository
 {
-
     /**
      * @var UserAvatarManager
      */
     private $avatarManager;
+
     /**
      * @var RoleRepository
      */
@@ -73,7 +71,7 @@ class EloquentUser implements UserRepository
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('username', "like", "%{$search}%");
+                $q->where('username', 'like', "%{$search}%");
                 $q->orWhere('first_name', 'like', "%{$search}%");
                 $q->orWhere('last_name', 'like', "%{$search}%");
             });
@@ -120,7 +118,7 @@ class EloquentUser implements UserRepository
     /**
      * {@inheritdoc}
      */
-    public function count($ids=[])
+    public function count($ids = [])
     {
         return User::whereIn('id', $ids)->count();
     }
@@ -128,7 +126,7 @@ class EloquentUser implements UserRepository
     /**
      * {@inheritdoc}
      */
-    public function newUsersCount($ids=[])
+    public function newUsersCount($ids = [])
     {
         return User::whereIn('id', $ids)->whereBetween('created_at', [Carbon::now()->firstOfMonth(), Carbon::now()])
             ->count();
@@ -137,7 +135,7 @@ class EloquentUser implements UserRepository
     /**
      * {@inheritdoc}
      */
-    public function countByStatus($status, $ids=[])
+    public function countByStatus($status, $ids = [])
     {
         return User::whereIn('id', $ids)->where('status', $status)->count();
     }
@@ -145,7 +143,7 @@ class EloquentUser implements UserRepository
     /**
      * {@inheritdoc}
      */
-    public function latest($count = 20, $ids=[])
+    public function latest($count = 20, $ids = [])
     {
         return User::whereIn('id', $ids)->orderBy('created_at', 'DESC')
             ->limit($count)
@@ -155,19 +153,19 @@ class EloquentUser implements UserRepository
     /**
      * {@inheritdoc}
      */
-    public function countOfNewUsersPerMonth(Carbon $from, Carbon $to, $ids=[])
+    public function countOfNewUsersPerMonth(Carbon $from, Carbon $to, $ids = [])
     {
         $result = User::whereIn('id', $ids)->whereBetween('created_at', [$from, $to])
             ->orderBy('created_at')
             ->get(['created_at'])
             ->groupBy(function ($user) {
-                return $user->created_at->format("Y_n");
+                return $user->created_at->format('Y_n');
             });
 
         $counts = [];
 
         while ($from->lt($to)) {
-            $key = $from->format("Y_n");
+            $key = $from->format('Y_n');
 
             $counts[$this->parseDate($key)] = count($result->get($key, []));
 
@@ -179,15 +177,15 @@ class EloquentUser implements UserRepository
 
     /**
      * Parse date from "Y_m" format to "{Month Name} {Year}" format.
-     * @param $yearMonth
+     *
      * @return string
      */
     private function parseDate($yearMonth)
     {
-        list($year, $month) = explode("_", $yearMonth);
+        [$year, $month] = explode('_', $yearMonth);
 
-        //$month = trans("app.months.{$month}");
-        //return "{$month} {$year}";
+        // $month = trans("app.months.{$month}");
+        // return "{$month} {$year}";
 
         return "{$year}-{$month}";
     }
@@ -201,7 +199,6 @@ class EloquentUser implements UserRepository
             ->first()
             ->users;
     }
-
 
     /**
      * {@inheritdoc}

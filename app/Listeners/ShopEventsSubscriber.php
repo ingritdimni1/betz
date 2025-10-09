@@ -2,13 +2,11 @@
 
 namespace VanguardLTE\Listeners;
 
-use VanguardLTE\Activity;
 use VanguardLTE\Events\Shop\ShopEdited;
 use VanguardLTE\Services\Logging\UserActivity\Logger;
 
 class ShopEventsSubscriber
 {
-
     private $logger;
 
     public function __construct(Logger $logger)
@@ -24,27 +22,27 @@ class ShopEventsSubscriber
 
         $changed = false;
 
-        $text = 'Update Shop ' . $shop->id . ' |';
-        $textOriginal = 'Original Shop ' . $shop->id . ' |';
+        $text = 'Update Shop '.$shop->id.' |';
+        $textOriginal = 'Original Shop '.$shop->id.' |';
 
-        foreach([
+        foreach ([
             'name' => 'Title', 'percent' => 'Percent', 'frontend' => 'Frontend',
             'orderby' => 'Order', 'currency' => 'Currency', 'access' => 'Access',
-            'country' => 'Country', 'os' => 'OS', 'device' => 'Device', 'is_blocked' => 'Status'] AS $column=>$title){
+            'country' => 'Country', 'os' => 'OS', 'device' => 'Device', 'is_blocked' => 'Status'] as $column => $title) {
 
-            if( isset($original[$column]) ){
+            if (isset($original[$column])) {
                 $textOriginal .= $this->template($column, $title, $original[$column]);
-            } else{
-                $textOriginal .= ' ' .$title. ' =  | ';
+            } else {
+                $textOriginal .= ' '.$title.' =  | ';
             }
-            if( isset($changes[$column]) ){
+            if (isset($changes[$column])) {
                 $changed = true;
                 $text .= $this->template($column, $title, $changes[$column]);
-            } else{
-                if( isset($original[$column]) ){
+            } else {
+                if (isset($original[$column])) {
                     $text .= $this->template($column, $title, $original[$column]);
-                } else{
-                    $text .= ' ' .$title. ' =  | ';
+                } else {
+                    $text .= ' '.$title.' =  | ';
                 }
             }
         }
@@ -148,25 +146,26 @@ class ShopEventsSubscriber
         }
         */
 
-        if(!$changed){
+        if (! $changed) {
             return;
         }
 
         $this->logger->log($text, $textOriginal, $type = 'system', 'shop', $shop->id);
     }
 
-    public function template($key, $title, $value){
+    public function template($key, $title, $value)
+    {
         $text = '';
-        if($key == 'access'){
-            $text .= ' ' .$title. ' = ' . ($value ? 'Yes' : 'No' ) . ' | ';
-        } elseif( $key == 'is_blocked'){
-            $text .= ' ' . $title. ' = ' . ($value ? 'Block' : 'Unblock' ) . ' | ';
+        if ($key == 'access') {
+            $text .= ' '.$title.' = '.($value ? 'Yes' : 'No').' | ';
+        } elseif ($key == 'is_blocked') {
+            $text .= ' '.$title.' = '.($value ? 'Block' : 'Unblock').' | ';
         } else {
-            $text .= ' ' . $title. ' = ' . $value . ' | ';
+            $text .= ' '.$title.' = '.$value.' | ';
         }
+
         return $text;
     }
-
 
     /**
      * Register the listeners for the subscriber.
@@ -175,7 +174,7 @@ class ShopEventsSubscriber
      */
     public function subscribe($events)
     {
-        $class = 'VanguardLTE\Listeners\ShopEventsSubscriber';
+        $class = \VanguardLTE\Listeners\ShopEventsSubscriber::class;
 
         $events->listen(ShopEdited::class, "{$class}@onShopEdit");
     }

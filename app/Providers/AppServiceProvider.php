@@ -3,6 +3,10 @@
 namespace VanguardLTE\Providers;
 
 use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\ServiceProvider;
 use VanguardLTE\Repositories\Activity\ActivityRepository;
 use VanguardLTE\Repositories\Activity\EloquentActivity;
 use VanguardLTE\Repositories\Country\CountryRepository;
@@ -15,12 +19,6 @@ use VanguardLTE\Repositories\Session\DbSession;
 use VanguardLTE\Repositories\Session\SessionRepository;
 use VanguardLTE\Repositories\User\EloquentUser;
 use VanguardLTE\Repositories\User\UserRepository;
-use Illuminate\Support\ServiceProvider;
-
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Pagination\LengthAwarePaginator;
-
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,11 +33,11 @@ class AppServiceProvider extends ServiceProvider
         config(['app.name' => settings('app_name')]);
         \Illuminate\Database\Schema\Builder::defaultStringLength(191);
 
-   /*      if($this->app->environment('production')) {
-            \URL::forceScheme('http');
-        }
+        /*      if($this->app->environment('production')) {
+                 \URL::forceScheme('http');
+             }
 
-   */      Paginator::useBootstrap();;
+        */ Paginator::useBootstrap();
 
         // Enable pagination
         /*
@@ -70,8 +68,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(CountryRepository::class, EloquentCountry::class);
 
         if ($this->app->environment('local')) {
-            //$this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
-            //$this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
+            // $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+            // $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
         }
     }
 }

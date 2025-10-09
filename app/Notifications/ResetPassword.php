@@ -2,8 +2,8 @@
 
 namespace VanguardLTE\Notifications;
 
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class ResetPassword extends Notification
 {
@@ -42,13 +42,13 @@ class ResetPassword extends Notification
      */
     public function toMail()
     {
-        $subject = sprintf("%s - %s", settings('app_name'), trans('app.reset_password'));
+        $subject = sprintf('%s - %s', settings('app_name'), trans('app.reset_password'));
 
         return (new MailMessage)
             ->subject($subject)
             ->line(trans('app.request_for_password_reset_made'))
-            ->line(trans('app.reset_password') . ': ' . $this->token)
-            //->action(trans('app.reset_password'), route('frontend.password.reset', $this->token))
+            ->line(trans('app.reset_password').': '.$this->token)
+            // ->action(trans('app.reset_password'), route('frontend.password.reset', $this->token))
             ->line(trans('app.if_you_did_not_requested'));
     }
 }

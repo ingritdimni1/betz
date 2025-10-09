@@ -8,8 +8,8 @@ Route::group(['middleware' => ['ipcheck']], function () {
     Route::post('/demo', ['uses' => 'BasicController@index']);
     Route::post('/agent/trial', ['uses' => 'BasicController@agent']);
 
-	Route::post('login', 'Auth\AuthController@login');
-	Route::post('logout', 'Auth\AuthController@logout');
+    Route::post('login', 'Auth\AuthController@login');
+    Route::post('logout', 'Auth\AuthController@logout');
 
     if (settings('reg_enabled')) {
         Route::post('register', 'Auth\RegistrationController@index');
@@ -23,21 +23,19 @@ Route::group(['middleware' => ['ipcheck']], function () {
         Route::post('password/reset', 'Auth\Password\ResetController@index');
     }
 
-
-	Route::get('me', 'Profile\DetailsController@index');
-	Route::patch('me/details', 'Profile\DetailsController@update');
-	Route::get('me/refund', 'Profile\DetailsController@refunds');
+    Route::get('me', 'Profile\DetailsController@index');
+    Route::patch('me/details', 'Profile\DetailsController@update');
+    Route::get('me/refund', 'Profile\DetailsController@refunds');
     Route::post('pincodes/check', 'Profile\DetailsController@check');
     Route::post('sms', 'Profile\DetailsController@sms');
 
     Route::post('me/balance', 'Profile\DetailsController@balance');
 
     Route::resource('users', 'Users\UsersController', [
-        'except' => ['create']
+        'except' => ['create'],
     ]);
     Route::post('users/mass', 'Users\UsersController@mass');
     Route::put('users/{user}/balance/{type}', 'Users\BalanceController@balance');
-
 
     Route::get('shops', ['uses' => 'ShopController@index']);
     Route::get('shops/currency', ['uses' => 'ShopController@currency']);
@@ -57,25 +55,22 @@ Route::group(['middleware' => ['ipcheck']], function () {
     Route::put('pincodes/{pincode}/update', ['uses' => 'PincodessController@update']);
     Route::delete('pincodes/{pincode}/destroy', ['uses' => 'PincodessController@destroy']);
 
-
-	Route::get('games', 'Games\GamesController@index');
+    Route::get('games', 'Games\GamesController@index');
     Route::get('category', 'Categories\CategoriesController@index');
-	Route::get('jackpots', 'Jackpots\JackpotsController@index');
+    Route::get('jackpots', 'Jackpots\JackpotsController@index');
 
-
-	Route::get('stats/pay', 'GameStats\GameStatsController@pay');
+    Route::get('stats/pay', 'GameStats\GameStatsController@pay');
     Route::get('stats/game', 'GameStats\GameStatsController@game');
     Route::get('stats/shift', 'GameStats\GameStatsController@shift');
     Route::put('shifts/start', 'OpenShiftController@start_shift');
     Route::get('shifts/info', 'OpenShiftController@info');
     Route::get('happyhours', 'HappyHourController@index');
     Route::get('paysystems', 'GeneralController@paysystems');
-	
-});	
+
+});
 // Custom api's
 Route::get('player/getlic', 'Player\LicenseController@AskForLicense');
 Route::post('player/licsaved', 'Player\LicenseController@LicSaved');
-
 
 Route::get('player/isonline', 'Player\StatusController@checkUsecheckUserOnline');
 Route::get('player/check-user-login', 'Player\StatusController@checkUserLogin');
@@ -86,10 +81,6 @@ Route::get('player/score', 'Player\StatusController@checkUserScore');
 
 Route::get('player/withdrawticket', 'Player\TicketController@payoutTicket');
 
-
-													  
-																		  
-																				 
 Route::get('credits', 'Player\CreditController@index');
 Route::get('credits/depositusb', 'Player\CreditController@creditsDeposit');
 Route::get('credits/pending-depositusb', 'Player\CreditController@pendingCashIN');
@@ -97,15 +88,9 @@ Route::get('credits/pending-depositusb', 'Player\CreditController@pendingCashIN'
 Route::get('cashier/readbalance', 'Player\StatusController@loadShopBalance');
 Route::get('cashier/readinamounts', 'Player\StatusController@loadInAmounts');
 
-									   
-																		
-																		  
-																							
-																	 
 // ==========================================================================================
-// V3 APIs Newly developed - 17-07-2021 
+// V3 APIs Newly developed - 17-07-2021
 Route::post('/V2', [AtmController::class, 'index']);
-
 
 /*
 Route::prefix('V2')->group(function () {
@@ -129,7 +114,7 @@ Route::prefix('V2')->group(function () {
     Route::post('/player/checkpanic', 'V2\AtmControler@checkForPanic');
     //Route::post('/player/deposit', 'V2\AtmControler@PendingCashIN');
 
-														   
+
     Route::post('/player/createuservoucher', 'V2\AtmControler@createUser');
     Route::post('/atm/updaterec', 'V2\AtmControler@updateRecServer');
     Route::post('/player/readcredits', 'V2\AtmControler@checkServerCreditsAsync');
@@ -143,4 +128,3 @@ Route::prefix('V2')->group(function () {
     Route::post('/player/withdraw', 'V2\AtmControler@CashOUTAsync');
 });
 */
-

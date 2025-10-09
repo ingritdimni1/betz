@@ -2,7 +2,6 @@
 
 namespace VanguardLTE\Listeners;
 
-use VanguardLTE\Activity;
 use VanguardLTE\Events\Permission\Created;
 use VanguardLTE\Events\Permission\Deleted;
 use VanguardLTE\Events\Permission\Updated;
@@ -57,7 +56,7 @@ class PermissionEventsSubscriber
      */
     public function subscribe($events)
     {
-        $class = 'VanguardLTE\Listeners\PermissionEventsSubscriber';
+        $class = \VanguardLTE\Listeners\PermissionEventsSubscriber::class;
 
         $events->listen(Created::class, "{$class}@onCreate");
         $events->listen(Updated::class, "{$class}@onUpdate");

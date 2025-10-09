@@ -20,20 +20,20 @@ return [
     ],
 
     'ses' => [
-        'key'    => env('SES_KEY'),
+        'key' => env('SES_KEY'),
         'secret' => env('SES_SECRET'),
         'region' => 'us-east-1',
     ],
 
     'stripe' => [
-        'model'  => VanguardLTE\User::class,
-        'key'    => env('STRIPE_KEY'),
+        'model' => VanguardLTE\User::class,
+        'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
 
     'mailtrap' => [
         'default_inbox' => '58948',
-        'secret' => env('MAILTRAP_SECRET')
+        'secret' => env('MAILTRAP_SECRET'),
     ],
 
     'facebook' => [
@@ -47,19 +47,19 @@ return [
         'client_secret' => env('TWITTER_CLIENT_SECRET'),
         'redirect' => env('TWITTER_CALLBACK_URI'),
     ],
-	
-	'vkontakte' => [
+
+    'vkontakte' => [
         'client_id' => env('VKONTAKTE_CLIENT_ID'),
         'client_secret' => env('VKONTAKTE_CLIENT_SECRET'),
         'redirect' => env('VKONTAKTE_CALLBACK_URI'),
     ],
-	
-	'odnoklassniki' => [
-		'client_id' => env('ODNOKLASSNIKI_CLIENT_ID'),
-		'client_secret' => env('ODNOKLASSNIKI_SECRET'),
-		'client_public' => env('ODNOKLASSNIKI_PUBLIC'),
-		'redirect' => env('ODNOKLASSNIKI_CALLBACK_URI'),  
-	],
+
+    'odnoklassniki' => [
+        'client_id' => env('ODNOKLASSNIKI_CLIENT_ID'),
+        'client_secret' => env('ODNOKLASSNIKI_SECRET'),
+        'client_public' => env('ODNOKLASSNIKI_PUBLIC'),
+        'redirect' => env('ODNOKLASSNIKI_CALLBACK_URI'),
+    ],
 
     'google' => [
         'client_id' => env('GOOGLE_CLIENT_ID'),
@@ -68,6 +68,6 @@ return [
     ],
 
     'authy' => [
-        'key' => env('AUTHY_KEY')
-    ]
+        'key' => env('AUTHY_KEY'),
+    ],
 ];

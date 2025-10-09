@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Games\ChaoJi888
 {
     set_time_limit(5);
@@ -8,87 +9,68 @@ namespace VanguardLTE\Games\ChaoJi888
         {
             function get_($request, $game)
             {
-                \DB::transaction(function() use ($request, $game)
-                {
-                    try
-                    {
+                \DB::transaction(function () use ($game) {
+                    try {
                         $response = '';
                         $userId = \Auth::id();
-                        if( $userId == null ) 
-                        {
+                        if ($userId == null) {
                             $response = '{"responseEvent":"error","responseType":"","serverResponse":"invalid login"}';
-                            exit( $response );
+                            exit($response);
                         }
                         $slotSettings = new SlotSettings($game, $userId);
-                        if( !$slotSettings->is_active() ) 
-                        {
+                        if (! $slotSettings->is_active()) {
                             $response = '{"responseEvent":"error","responseType":"","serverResponse":"Game is disabled"}';
-                            exit( $response );
+                            exit($response);
                         }
                         $postData = json_decode(trim(file_get_contents('php://input')), true);
                         $postData['slotEvent'] = $postData['request'];
-                        if( $postData['slotEvent'] == 'update' ) 
-                        {
-                            $response = '{"responseEvent":"error","responseType":"' . $postData['slotEvent'] . '","serverResponse":"' . $slotSettings->GetBalance() . '"}';
-                            exit( $response );
+                        if ($postData['slotEvent'] == 'update') {
+                            $response = '{"responseEvent":"error","responseType":"'.$postData['slotEvent'].'","serverResponse":"'.$slotSettings->GetBalance().'"}';
+                            exit($response);
                         }
-                        if( $slotSettings->GetGameData($slotSettings->slotId . 'CurrentFreeGame') <= $slotSettings->GetGameData($slotSettings->slotId . 'FreeGames') && $slotSettings->GetGameData($slotSettings->slotId . 'FreeGames') > 0 && $postData['slotEvent'] != 'init' ) 
-                        {
+                        if ($slotSettings->GetGameData($slotSettings->slotId.'CurrentFreeGame') <= $slotSettings->GetGameData($slotSettings->slotId.'FreeGames') && $slotSettings->GetGameData($slotSettings->slotId.'FreeGames') > 0 && $postData['slotEvent'] != 'init') {
                             $postData['slotEvent'] = 'freespin';
                         }
-                        if( $postData['slotEvent'] == 'spin' || $postData['slotEvent'] == 'freespin' || $postData['slotEvent'] == 'respin' ) 
-                        {
-                            if( $postData['lines'] <= 0 || $postData['bet'] <= 0 ) 
-                            {
-                                $response = '{"responseEvent":"error","responseType":"' . $postData['slotEvent'] . '","serverResponse":"invalid bet state"}';
-                                exit( $response );
+                        if ($postData['slotEvent'] == 'spin' || $postData['slotEvent'] == 'freespin' || $postData['slotEvent'] == 'respin') {
+                            if ($postData['lines'] <= 0 || $postData['bet'] <= 0) {
+                                $response = '{"responseEvent":"error","responseType":"'.$postData['slotEvent'].'","serverResponse":"invalid bet state"}';
+                                exit($response);
                             }
-                            if( $slotSettings->GetBalance() < ($postData['bet'] * $postData['lines']) ) 
-                            {
-                                $response = '{"responseEvent":"error","responseType":"' . $postData['slotEvent'] . '","serverResponse":"invalid balance"}';
-                                exit( $response );
+                            if ($slotSettings->GetBalance() < ($postData['bet'] * $postData['lines'])) {
+                                $response = '{"responseEvent":"error","responseType":"'.$postData['slotEvent'].'","serverResponse":"invalid balance"}';
+                                exit($response);
                             }
-                            if( $slotSettings->GetGameData($slotSettings->slotId . 'FreeGames') <= $slotSettings->GetGameData($slotSettings->slotId . 'CurrentFreeGame') && $postData['slotEvent'] == 'freespin' ) 
-                            {
-                                $response = '{"responseEvent":"error","responseType":"' . $postData['slotEvent'] . '","serverResponse":"invalid bonus state"}';
-                                exit( $response );
+                            if ($slotSettings->GetGameData($slotSettings->slotId.'FreeGames') <= $slotSettings->GetGameData($slotSettings->slotId.'CurrentFreeGame') && $postData['slotEvent'] == 'freespin') {
+                                $response = '{"responseEvent":"error","responseType":"'.$postData['slotEvent'].'","serverResponse":"invalid bonus state"}';
+                                exit($response);
                             }
+                        } elseif ($postData['slotEvent'] == 'slotGamble' && ($slotSettings->GetGameData($slotSettings->slotId.'TotalWin') <= 0 || $slotSettings->GetBalance() < $slotSettings->GetGameData($slotSettings->slotId.'TotalWin'))) {
+                            $response = '{"responseEvent":"error","responseType":"'.$postData['slotEvent'].'","serverResponse":"invalid gamble state"}';
+                            $slotSettings->InternalError($response.' -- TotalWin = '.$slotSettings->GetGameData($slotSettings->slotId.'TotalWin').' -- Balance = '.$slotSettings->GetBalance());
+                            exit($response);
                         }
-                        else if( $postData['slotEvent'] == 'slotGamble' && ($slotSettings->GetGameData($slotSettings->slotId . 'TotalWin') <= 0 || $slotSettings->GetBalance() < $slotSettings->GetGameData($slotSettings->slotId . 'TotalWin')) ) 
-                        {
-                            $response = '{"responseEvent":"error","responseType":"' . $postData['slotEvent'] . '","serverResponse":"invalid gamble state"}';
-                            $slotSettings->InternalError($response . ' -- TotalWin = ' . $slotSettings->GetGameData($slotSettings->slotId . 'TotalWin') . ' -- Balance = ' . $slotSettings->GetBalance());
-                            exit( $response );
-                        }
-                        if( $postData['slotEvent'] == 'init' ) 
-                        {
+                        if ($postData['slotEvent'] == 'init') {
                             $lastEvent = $slotSettings->GetHistory();
-                            if( $lastEvent != 'NULL' ) 
-                            {
-                                if( isset($lastEvent->serverResponse->bonusWin) ) 
-                                {
-                                    $slotSettings->SetGameData($slotSettings->slotId . 'BonusWin', $lastEvent->serverResponse->bonusWin);
+                            if ($lastEvent != 'NULL') {
+                                if (isset($lastEvent->serverResponse->bonusWin)) {
+                                    $slotSettings->SetGameData($slotSettings->slotId.'BonusWin', $lastEvent->serverResponse->bonusWin);
+                                } else {
+                                    $slotSettings->SetGameData($slotSettings->slotId.'BonusWin', $lastEvent->serverResponse->totalWin);
                                 }
-                                else
-                                {
-                                    $slotSettings->SetGameData($slotSettings->slotId . 'BonusWin', $lastEvent->serverResponse->totalWin);
-                                }
-                                $slotSettings->SetGameData($slotSettings->slotId . 'FreeGames', $lastEvent->serverResponse->totalFreeGames);
-                                $slotSettings->SetGameData($slotSettings->slotId . 'CurrentFreeGame', $lastEvent->serverResponse->currentFreeGames);
-                                $slotSettings->SetGameData($slotSettings->slotId . 'TotalWin', $lastEvent->serverResponse->totalWin);
-                                $slotSettings->SetGameData($slotSettings->slotId . 'FreeBalance', $lastEvent->serverResponse->Balance);
+                                $slotSettings->SetGameData($slotSettings->slotId.'FreeGames', $lastEvent->serverResponse->totalFreeGames);
+                                $slotSettings->SetGameData($slotSettings->slotId.'CurrentFreeGame', $lastEvent->serverResponse->currentFreeGames);
+                                $slotSettings->SetGameData($slotSettings->slotId.'TotalWin', $lastEvent->serverResponse->totalWin);
+                                $slotSettings->SetGameData($slotSettings->slotId.'FreeBalance', $lastEvent->serverResponse->Balance);
                                 $rp1 = implode(',', $lastEvent->serverResponse->reelsSymbols->rp);
-                                $rp2 = '[' . $lastEvent->serverResponse->reelsSymbols->reel1[0] . ',' . $lastEvent->serverResponse->reelsSymbols->reel2[0] . ',' . $lastEvent->serverResponse->reelsSymbols->reel3[0] . ']';
-                                $rp2 .= (',[' . $lastEvent->serverResponse->reelsSymbols->reel1[1] . ',' . $lastEvent->serverResponse->reelsSymbols->reel2[1] . ',' . $lastEvent->serverResponse->reelsSymbols->reel3[1] . ']');
-                                $rp2 .= (',[' . $lastEvent->serverResponse->reelsSymbols->reel1[2] . ',' . $lastEvent->serverResponse->reelsSymbols->reel2[2] . ',' . $lastEvent->serverResponse->reelsSymbols->reel3[2] . ']');
+                                $rp2 = '['.$lastEvent->serverResponse->reelsSymbols->reel1[0].','.$lastEvent->serverResponse->reelsSymbols->reel2[0].','.$lastEvent->serverResponse->reelsSymbols->reel3[0].']';
+                                $rp2 .= (',['.$lastEvent->serverResponse->reelsSymbols->reel1[1].','.$lastEvent->serverResponse->reelsSymbols->reel2[1].','.$lastEvent->serverResponse->reelsSymbols->reel3[1].']');
+                                $rp2 .= (',['.$lastEvent->serverResponse->reelsSymbols->reel1[2].','.$lastEvent->serverResponse->reelsSymbols->reel2[2].','.$lastEvent->serverResponse->reelsSymbols->reel3[2].']');
                                 $bet = $lastEvent->serverResponse->bet;
-                            }
-                            else
-                            {
+                            } else {
                                 $rp1 = implode(',', [
-                                    rand(0, count($slotSettings->reelStrip1) - 3), 
-                                    rand(0, count($slotSettings->reelStrip2) - 3), 
-                                    rand(0, count($slotSettings->reelStrip3) - 3)
+                                    rand(0, count($slotSettings->reelStrip1) - 3),
+                                    rand(0, count($slotSettings->reelStrip2) - 3),
+                                    rand(0, count($slotSettings->reelStrip3) - 3),
                                 ]);
                                 $rp_1 = rand(0, count($slotSettings->reelStrip1) - 3);
                                 $rp_2 = rand(0, count($slotSettings->reelStrip2) - 3);
@@ -96,24 +78,22 @@ namespace VanguardLTE\Games\ChaoJi888
                                 $rr1 = $slotSettings->reelStrip1[$rp_1];
                                 $rr2 = $slotSettings->reelStrip2[$rp_2];
                                 $rr3 = $slotSettings->reelStrip3[$rp_3];
-                                $rp2 = '[' . $rr1 . ',' . $rr2 . ',' . $rr3 . ']';
+                                $rp2 = '['.$rr1.','.$rr2.','.$rr3.']';
                                 $rr1 = $slotSettings->reelStrip1[$rp_1 + 1];
                                 $rr2 = $slotSettings->reelStrip2[$rp_2 + 1];
                                 $rr3 = $slotSettings->reelStrip3[$rp_3 + 1];
-                                $rp2 .= (',[' . $rr1 . ',' . $rr2 . ',' . $rr3 . ']');
+                                $rp2 .= (',['.$rr1.','.$rr2.','.$rr3.']');
                                 $rr1 = $slotSettings->reelStrip1[$rp_1 + 2];
                                 $rr2 = $slotSettings->reelStrip2[$rp_2 + 2];
                                 $rr3 = $slotSettings->reelStrip3[$rp_3 + 2];
-                                $rp2 .= (',[' . $rr1 . ',' . $rr2 . ',' . $rr3 . ']');
+                                $rp2 .= (',['.$rr1.','.$rr2.','.$rr3.']');
                                 $bet = $slotSettings->Bet[0];
                             }
                             $jsSet = json_encode($slotSettings);
                             $Balance = $slotSettings->GetBalance();
-                            $lang = json_encode(\Lang::get('games.' . $game));
-                            $response = '{"gameSession":"","balance":{"currency":"' . $slotSettings->slotCurrency . '","amount":' . $Balance . ',"real":{"amount":' . $Balance . '},"bonus":{"amount":0}},"result":{"request":"init","name":"Long Long Long","gameId":"sw_lll","settings":{"winMax":500000,"stakeAll":[' . implode(',', $slotSettings->Bet) . '],"stakeDef":' . $bet . ',"stakeMax":' . $slotSettings->Bet[count($slotSettings->Bet) - 1] . ',"stakeMin":' . $slotSettings->Bet[0] . ',"maxTotalStake":' . ($slotSettings->Bet[count($slotSettings->Bet) - 1] * 1) . ',"defaultCoin":1,"coins":[1],"currencyMultiplier":100},"slot":{"sets":{"main":{"reels":[[' . implode(',', $slotSettings->reelStrip1) . '],[' . implode(',', $slotSettings->reelStrip2) . '],[' . implode(',', $slotSettings->reelStrip3) . ']]}},"reels":{"set":"main","positions":[' . $rp1 . '],"view":[' . $rp2 . ']},"linesDefinition":{"fixedLinesCount":1},"paytable":{"stake":{"value":1,"multiplier":1,"payouts":[[8,88,888]]}},"lines":[[1,1,1]]},"stake":null,"version":"1.0.2"},"roundEnded":true}';
-                        }
-                        else if( $postData['slotEvent'] == 'gamble5GetUserCards' ) 
-                        {
+                            $lang = json_encode(\Lang::get('games.'.$game));
+                            $response = '{"gameSession":"","balance":{"currency":"'.$slotSettings->slotCurrency.'","amount":'.$Balance.',"real":{"amount":'.$Balance.'},"bonus":{"amount":0}},"result":{"request":"init","name":"Long Long Long","gameId":"sw_lll","settings":{"winMax":500000,"stakeAll":['.implode(',', $slotSettings->Bet).'],"stakeDef":'.$bet.',"stakeMax":'.$slotSettings->Bet[count($slotSettings->Bet) - 1].',"stakeMin":'.$slotSettings->Bet[0].',"maxTotalStake":'.($slotSettings->Bet[count($slotSettings->Bet) - 1] * 1).',"defaultCoin":1,"coins":[1],"currencyMultiplier":100},"slot":{"sets":{"main":{"reels":[['.implode(',', $slotSettings->reelStrip1).'],['.implode(',', $slotSettings->reelStrip2).'],['.implode(',', $slotSettings->reelStrip3).']]}},"reels":{"set":"main","positions":['.$rp1.'],"view":['.$rp2.']},"linesDefinition":{"fixedLinesCount":1},"paytable":{"stake":{"value":1,"multiplier":1,"payouts":[[8,88,888]]}},"lines":[[1,1,1]]},"stake":null,"version":"1.0.2"},"roundEnded":true}';
+                        } elseif ($postData['slotEvent'] == 'gamble5GetUserCards') {
                             $Balance = $slotSettings->GetBalance();
                             $isGambleWin = rand(1, $slotSettings->GetGambleSettings());
                             $dealerCard = $slotSettings->GetGameData('ChaoJi888DealerCard');
@@ -122,194 +102,169 @@ namespace VanguardLTE\Games\ChaoJi888
                             $gambleChoice = $postData['gambleChoice'] - 2;
                             $gambleState = '';
                             $gambleCards = [
-                                2, 
-                                3, 
-                                4, 
-                                5, 
-                                6, 
-                                7, 
-                                8, 
-                                9, 
-                                10, 
-                                11, 
-                                12, 
-                                13, 
-                                14
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                7,
+                                8,
+                                9,
+                                10,
+                                11,
+                                12,
+                                13,
+                                14,
                             ];
                             $gambleSuits = [
-                                'C', 
-                                'S', 
-                                'D', 
-                                'H'
+                                'C',
+                                'S',
+                                'D',
+                                'H',
                             ];
                             $gambleId = [
-                                '', 
-                                '', 
-                                '2', 
-                                '3', 
-                                '4', 
-                                '5', 
-                                '6', 
-                                '7', 
-                                '8', 
-                                '9', 
-                                '10', 
-                                'J', 
-                                'Q', 
-                                'K', 
-                                'A'
+                                '',
+                                '',
+                                '2',
+                                '3',
+                                '4',
+                                '5',
+                                '6',
+                                '7',
+                                '8',
+                                '9',
+                                '10',
+                                'J',
+                                'Q',
+                                'K',
+                                'A',
                             ];
                             $userCard = 0;
-                            if( $slotSettings->GetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : '')) < ($totalWin * 2) ) 
-                            {
+                            if ($slotSettings->GetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : '')) < ($totalWin * 2)) {
                                 $isGambleWin = 0;
                             }
-                            if( $isGambleWin == 1 ) 
-                            {
+                            if ($isGambleWin == 1) {
                                 $userCard = rand($dealerCard, 14);
-                            }
-                            else
-                            {
+                            } else {
                                 $userCard = rand(2, $dealerCard);
                             }
-                            if( $dealerCard < $userCard ) 
-                            {
+                            if ($dealerCard < $userCard) {
                                 $gambleWin = $totalWin;
                                 $totalWin = $totalWin * 2;
                                 $gambleState = 'win';
-                            }
-                            else if( $userCard < $dealerCard ) 
-                            {
+                            } elseif ($userCard < $dealerCard) {
                                 $gambleWin = -1 * $totalWin;
                                 $totalWin = 0;
                                 $gambleState = 'lose';
-                            }
-                            else
-                            {
+                            } else {
                                 $gambleWin = $totalWin;
                                 $totalWin = $totalWin;
                                 $gambleState = 'draw';
                             }
-                            if( $gambleWin != $totalWin ) 
-                            {
+                            if ($gambleWin != $totalWin) {
                                 $slotSettings->SetBalance($gambleWin);
                                 $slotSettings->SetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : ''), $gambleWin * -1);
                             }
                             $afterBalance = $slotSettings->GetBalance();
                             $userCards = [
-                                rand(2, 14), 
-                                rand(2, 14), 
-                                rand(2, 14), 
-                                rand(2, 14)
+                                rand(2, 14),
+                                rand(2, 14),
+                                rand(2, 14),
+                                rand(2, 14),
                             ];
                             $userCards[$gambleChoice] = $userCard;
-                            for( $i = 0; $i < 4; $i++ ) 
-                            {
-                                $userCards[$i] = '"' . $gambleId[$userCards[$i]] . $gambleSuits[rand(0, 3)] . '"';
+                            for ($i = 0; $i < 4; $i++) {
+                                $userCards[$i] = '"'.$gambleId[$userCards[$i]].$gambleSuits[rand(0, 3)].'"';
                             }
                             $userCardsStr = implode(',', $userCards);
                             $slotSettings->SetGameData('ChaoJi888TotalWin', $totalWin);
-                            $jsSet = '{"dealerCard":"' . $dealerCard . '","playerCards":[' . $userCardsStr . '],"gambleState":"' . $gambleState . '","totalWin":' . $totalWin . ',"afterBalance":' . $afterBalance . ',"Balance":' . $Balance . '}';
-                            $response = '{"responseEvent":"gambleResult","deb":' . $userCards[$gambleChoice] . ',"serverResponse":' . $jsSet . '}';
-                        }
-                        else if( $postData['slotEvent'] == 'gamble5GetDealerCard' ) 
-                        {
+                            $jsSet = '{"dealerCard":"'.$dealerCard.'","playerCards":['.$userCardsStr.'],"gambleState":"'.$gambleState.'","totalWin":'.$totalWin.',"afterBalance":'.$afterBalance.',"Balance":'.$Balance.'}';
+                            $response = '{"responseEvent":"gambleResult","deb":'.$userCards[$gambleChoice].',"serverResponse":'.$jsSet.'}';
+                        } elseif ($postData['slotEvent'] == 'gamble5GetDealerCard') {
                             $gambleCards = [
-                                2, 
-                                3, 
-                                4, 
-                                5, 
-                                6, 
-                                7, 
-                                8, 
-                                9, 
-                                10, 
-                                11, 
-                                12, 
-                                13, 
-                                14
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                7,
+                                8,
+                                9,
+                                10,
+                                11,
+                                12,
+                                13,
+                                14,
                             ];
                             $gambleId = [
-                                '', 
-                                '', 
-                                '2', 
-                                '3', 
-                                '4', 
-                                '5', 
-                                '6', 
-                                '7', 
-                                '8', 
-                                '9', 
-                                '10', 
-                                'J', 
-                                'Q', 
-                                'K', 
-                                'A'
+                                '',
+                                '',
+                                '2',
+                                '3',
+                                '4',
+                                '5',
+                                '6',
+                                '7',
+                                '8',
+                                '9',
+                                '10',
+                                'J',
+                                'Q',
+                                'K',
+                                'A',
                             ];
                             $gambleSuits = [
-                                'C', 
-                                'S', 
-                                'D', 
-                                'H'
+                                'C',
+                                'S',
+                                'D',
+                                'H',
                             ];
                             $tmpDc = $gambleCards[rand(0, 12)];
                             $slotSettings->SetGameData('ChaoJi888DealerCard', $tmpDc);
-                            $dealerCard = $gambleId[$tmpDc] . $gambleSuits[rand(0, 3)];
-                            $jsSet = '{"dealerCard":"' . $dealerCard . '"}';
-                            $response = '{"responseEvent":"gamble5DealerCard","serverResponse":' . $jsSet . '}';
-                        }
-                        else if( $postData['slotEvent'] == 'slotGamble' ) 
-                        {
+                            $dealerCard = $gambleId[$tmpDc].$gambleSuits[rand(0, 3)];
+                            $jsSet = '{"dealerCard":"'.$dealerCard.'"}';
+                            $response = '{"responseEvent":"gamble5DealerCard","serverResponse":'.$jsSet.'}';
+                        } elseif ($postData['slotEvent'] == 'slotGamble') {
                             $Balance = $slotSettings->GetBalance();
                             $isGambleWin = rand(1, $slotSettings->GetGambleSettings());
                             $dealerCard = '';
                             $totalWin = $slotSettings->GetGameData('ChaoJi888TotalWin');
                             $gambleWin = 0;
                             $statBet = $totalWin;
-                            if( $slotSettings->GetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : '')) < ($totalWin * 2) ) 
-                            {
+                            if ($slotSettings->GetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : '')) < ($totalWin * 2)) {
                                 $isGambleWin = 0;
                             }
-                            if( $isGambleWin == 1 ) 
-                            {
+                            if ($isGambleWin == 1) {
                                 $gambleState = 'win';
                                 $gambleWin = $totalWin;
                                 $totalWin = $totalWin * 2;
-                                if( $postData['gambleChoice'] == 'red' ) 
-                                {
+                                if ($postData['gambleChoice'] == 'red') {
                                     $tmpCards = [
-                                        'D', 
-                                        'H'
+                                        'D',
+                                        'H',
+                                    ];
+                                    $dealerCard = $tmpCards[rand(0, 1)];
+                                } else {
+                                    $tmpCards = [
+                                        'C',
+                                        'S',
                                     ];
                                     $dealerCard = $tmpCards[rand(0, 1)];
                                 }
-                                else
-                                {
-                                    $tmpCards = [
-                                        'C', 
-                                        'S'
-                                    ];
-                                    $dealerCard = $tmpCards[rand(0, 1)];
-                                }
-                            }
-                            else
-                            {
+                            } else {
                                 $gambleState = 'lose';
                                 $gambleWin = -1 * $totalWin;
                                 $totalWin = 0;
-                                if( $postData['gambleChoice'] == 'red' ) 
-                                {
+                                if ($postData['gambleChoice'] == 'red') {
                                     $tmpCards = [
-                                        'C', 
-                                        'S'
+                                        'C',
+                                        'S',
                                     ];
                                     $dealerCard = $tmpCards[rand(0, 1)];
-                                }
-                                else
-                                {
+                                } else {
                                     $tmpCards = [
-                                        'D', 
-                                        'H'
+                                        'D',
+                                        'H',
                                     ];
                                     $dealerCard = $tmpCards[rand(0, 1)];
                                 }
@@ -318,19 +273,17 @@ namespace VanguardLTE\Games\ChaoJi888
                             $slotSettings->SetBalance($gambleWin);
                             $slotSettings->SetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : ''), $gambleWin * -1);
                             $afterBalance = $slotSettings->GetBalance();
-                            $jsSet = '{"dealerCard":"' . $dealerCard . '","gambleState":"' . $gambleState . '","totalWin":' . $totalWin . ',"afterBalance":' . $afterBalance . ',"Balance":' . $Balance . '}';
-                            $response = '{"responseEvent":"gambleResult","serverResponse":' . $jsSet . '}';
+                            $jsSet = '{"dealerCard":"'.$dealerCard.'","gambleState":"'.$gambleState.'","totalWin":'.$totalWin.',"afterBalance":'.$afterBalance.',"Balance":'.$Balance.'}';
+                            $response = '{"responseEvent":"gambleResult","serverResponse":'.$jsSet.'}';
                             $slotSettings->SaveLogReport($jsSet, $statBet, 1, $gambleWin, $postData['slotEvent']);
-                        }
-                        else if( $postData['slotEvent'] == 'spin' || $postData['slotEvent'] == 'freespin' ) 
-                        {
+                        } elseif ($postData['slotEvent'] == 'spin' || $postData['slotEvent'] == 'freespin') {
                             $linesId = [];
                             $linesId[0] = [
-                                1, 
-                                1, 
-                                1, 
-                                1, 
-                                1
+                                1,
+                                1,
+                                1,
+                                1,
+                                1,
                             ];
                             $postData['slotBet'] = $postData['bet'];
                             $postData['slotLines'] = $postData['lines'];
@@ -338,10 +291,8 @@ namespace VanguardLTE\Games\ChaoJi888
                             $winTypeTmp = $slotSettings->GetSpinSettings($postData['slotEvent'], $postData['slotBet'] * $postData['slotLines'], $postData['slotLines']);
                             $winType = $winTypeTmp[0];
                             $spinWinLimit = $winTypeTmp[1];
-                            if( $postData['slotEvent'] != 'freespin' ) 
-                            {
-                                if( !isset($postData['slotEvent']) ) 
-                                {
+                            if ($postData['slotEvent'] != 'freespin') {
+                                if (! isset($postData['slotEvent'])) {
                                     $postData['slotEvent'] = 'bet';
                                 }
                                 $bankSum = ($postData['slotBet'] * $postData['slotLines']) / 100 * $slotSettings->GetPercent();
@@ -354,9 +305,7 @@ namespace VanguardLTE\Games\ChaoJi888
                                 $slotSettings->SetGameData('ChaoJi888CurrentFreeGame', 0);
                                 $slotSettings->SetGameData('ChaoJi888TotalWin', 0);
                                 $slotSettings->SetGameData('ChaoJi888FreeBalance', 0);
-                            }
-                            else
-                            {
+                            } else {
                                 $slotSettings->SetGameData('ChaoJi888CurrentFreeGame', $slotSettings->GetGameData('ChaoJi888CurrentFreeGame') + 1);
                                 $bonusMpl = $slotSettings->slotFreeMpl;
                             }
@@ -365,114 +314,92 @@ namespace VanguardLTE\Games\ChaoJi888
                             $randCom[0] = rand(1, 10);
                             $randCom[1] = rand(1, 100);
                             $randCom[2] = rand(1, 1000);
-                            for( $i = 0; $i <= 2000; $i++ ) 
-                            {
+                            for ($i = 0; $i <= 2000; $i++) {
                                 $totalWin = 0;
                                 $lineWins = [];
                                 $cWins = [
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0, 
-                                    0
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
                                 ];
                                 $wild = ['NONE'];
                                 $scatter = 'NONE';
                                 $reels = $slotSettings->GetReelStrips($winType);
-                                if( $reels['reel1'][1] == '0' ) 
-                                {
+                                if ($reels['reel1'][1] == '0') {
                                     $reels['reel1'][0] = '1';
                                     $reels['reel1'][2] = '1';
                                 }
-                                if( $reels['reel2'][1] == '0' ) 
-                                {
+                                if ($reels['reel2'][1] == '0') {
                                     $reels['reel2'][0] = '1';
                                     $reels['reel2'][2] = '1';
                                 }
-                                if( $reels['reel3'][1] == '0' ) 
-                                {
+                                if ($reels['reel3'][1] == '0') {
                                     $reels['reel3'][0] = '1';
                                     $reels['reel3'][2] = '1';
                                 }
                                 $cRang = 0;
-                                for( $k = 0; $k < $postData['slotLines']; $k++ ) 
-                                {
+                                for ($k = 0; $k < $postData['slotLines']; $k++) {
                                     $tmpStringWin = '';
-                                    for( $j = 0; $j < count($slotSettings->SymbolGame); $j++ ) 
-                                    {
+                                    for ($j = 0; $j < count($slotSettings->SymbolGame); $j++) {
                                         $csym = $slotSettings->SymbolGame[$j];
-                                        if( $csym == $scatter || !isset($slotSettings->Paytable[$csym]) ) 
-                                        {
-                                        }
-                                        else
-                                        {
+                                        if ($csym == $scatter || ! isset($slotSettings->Paytable[$csym])) {
+                                        } else {
                                             $s = [];
                                             $s[0] = $reels['reel1'][1];
                                             $s[1] = $reels['reel2'][1];
                                             $s[2] = $reels['reel3'][1];
-                                            if( $s[0] == $csym ) 
-                                            {
+                                            if ($s[0] == $csym) {
                                                 $cRang = $slotSettings->Paytable[$csym][1];
                                                 $tmpWin = $slotSettings->Paytable[$csym][1] * $postData['slotBet'];
-                                                if( $cWins[$k] < $tmpWin ) 
-                                                {
+                                                if ($cWins[$k] < $tmpWin) {
                                                     $cWins[$k] = $tmpWin;
-                                                    if( $csym == 1 ) 
-                                                    {
+                                                    if ($csym == 1) {
                                                         $psym = 1;
                                                     }
-                                                    if( $csym == 0 ) 
-                                                    {
+                                                    if ($csym == 0) {
                                                         $psym = 0;
                                                     }
-                                                    $tmpStringWin = '{"reward":"line","lineId":' . $k . ',"payout":' . $cWins[$k] . ',"lineMultiplier":1,"paytable":[' . $psym . ',0]}';
+                                                    $tmpStringWin = '{"reward":"line","lineId":'.$k.',"payout":'.$cWins[$k].',"lineMultiplier":1,"paytable":['.$psym.',0]}';
                                                 }
                                             }
-                                            if( $s[0] == $csym && $s[1] == $csym ) 
-                                            {
+                                            if ($s[0] == $csym && $s[1] == $csym) {
                                                 $cRang = $slotSettings->Paytable[$csym][2];
                                                 $tmpWin = $slotSettings->Paytable[$csym][2] * $postData['slotBet'];
-                                                if( $cWins[$k] < $tmpWin ) 
-                                                {
+                                                if ($cWins[$k] < $tmpWin) {
                                                     $cWins[$k] = $tmpWin;
-                                                    if( $csym == 1 ) 
-                                                    {
+                                                    if ($csym == 1) {
                                                         $psym = 1;
                                                     }
-                                                    if( $csym == 0 ) 
-                                                    {
+                                                    if ($csym == 0) {
                                                         $psym = 0;
                                                     }
-                                                    $tmpStringWin = '{"reward":"line","lineId":' . $k . ',"payout":' . $cWins[$k] . ',"lineMultiplier":1,"paytable":[' . $psym . ',1]}';
+                                                    $tmpStringWin = '{"reward":"line","lineId":'.$k.',"payout":'.$cWins[$k].',"lineMultiplier":1,"paytable":['.$psym.',1]}';
                                                 }
                                             }
-                                            if( $s[0] == $csym && $s[1] == $csym && $s[2] == $csym ) 
-                                            {
+                                            if ($s[0] == $csym && $s[1] == $csym && $s[2] == $csym) {
                                                 $cRang = $slotSettings->Paytable[$csym][3];
                                                 $tmpWin = $slotSettings->Paytable[$csym][3] * $postData['slotBet'];
-                                                if( $cWins[$k] < $tmpWin ) 
-                                                {
+                                                if ($cWins[$k] < $tmpWin) {
                                                     $cWins[$k] = $tmpWin;
-                                                    if( $csym == 1 ) 
-                                                    {
+                                                    if ($csym == 1) {
                                                         $psym = 1;
                                                     }
-                                                    if( $csym == 0 ) 
-                                                    {
+                                                    if ($csym == 0) {
                                                         $psym = 0;
                                                     }
-                                                    $tmpStringWin = '{"reward":"line","lineId":' . $k . ',"payout":' . $cWins[$k] . ',"lineMultiplier":1,"paytable":[' . $psym . ',2]}';
+                                                    $tmpStringWin = '{"reward":"line","lineId":'.$k.',"payout":'.$cWins[$k].',"lineMultiplier":1,"paytable":['.$psym.',2]}';
                                                 }
                                             }
                                         }
                                     }
-                                    if( $cWins[$k] > 0 && $tmpStringWin != '' ) 
-                                    {
+                                    if ($cWins[$k] > 0 && $tmpStringWin != '') {
                                         array_push($lineWins, $tmpStringWin);
                                         $totalWin += $cWins[$k];
                                     }
@@ -480,167 +407,118 @@ namespace VanguardLTE\Games\ChaoJi888
                                 $scattersWin = 0;
                                 $scattersStr = '{';
                                 $scattersCount = 0;
-                                for( $r = 1; $r <= 3; $r++ ) 
-                                {
-                                    for( $p = 0; $p <= 3; $p++ ) 
-                                    {
-                                        if( $reels['reel' . $r][$p] == $scatter ) 
-                                        {
+                                for ($r = 1; $r <= 3; $r++) {
+                                    for ($p = 0; $p <= 3; $p++) {
+                                        if ($reels['reel'.$r][$p] == $scatter) {
                                             $scattersCount++;
-                                            $scattersStr .= ('"winReel' . $r . '":[' . $p . ',"' . $scatter . '"],');
+                                            $scattersStr .= ('"winReel'.$r.'":['.$p.',"'.$scatter.'"],');
                                         }
                                     }
                                 }
                                 $scattersWin = 0;
-                                if( $scattersCount >= 3 && $slotSettings->slotBonus ) 
-                                {
+                                if ($scattersCount >= 3 && $slotSettings->slotBonus) {
                                     $scattersStr .= '"scattersType":"bonus",';
-                                }
-                                else if( $scattersWin > 0 ) 
-                                {
+                                } elseif ($scattersWin > 0) {
                                     $scattersStr .= '"scattersType":"win",';
-                                }
-                                else
-                                {
+                                } else {
                                     $scattersStr .= '"scattersType":"none",';
                                 }
-                                $scattersStr .= ('"scattersWin":' . $scattersWin . '}');
+                                $scattersStr .= ('"scattersWin":'.$scattersWin.'}');
                                 $totalWin += $scattersWin;
-                                if( $i > 1000 ) 
-                                {
+                                if ($i > 1000) {
                                     $winType = 'none';
                                     $randCom[0] = 0;
                                     $randCom[1] = 0;
                                     $randCom[2] = 0;
                                 }
-                                if( $i > 1500 ) 
-                                {
-                                    $response = '{"responseEvent":"error","responseType":"","serverResponse":"' . $totalWin . ' Bad Reel Strip"}';
-                                    exit( $response );
+                                if ($i > 1500) {
+                                    $response = '{"responseEvent":"error","responseType":"","serverResponse":"'.$totalWin.' Bad Reel Strip"}';
+                                    exit($response);
                                 }
-                                if( $slotSettings->MaxWin < ($totalWin * $slotSettings->CurrentDenom) ) 
-                                {
-                                }
-                                else
-                                {
+                                if ($slotSettings->MaxWin < ($totalWin * $slotSettings->CurrentDenom)) {
+                                } else {
                                     $minWin = $slotSettings->GetRandomPay();
-                                    if( $i > 700 ) 
-                                    {
+                                    if ($i > 700) {
                                         $minWin = 0;
                                     }
-                                    if( $slotSettings->increaseRTP && $winType == 'win' && $totalWin < ($minWin * $postData['slotBet'] * $postData['slotLines']) ) 
-                                    {
-                                    }
-                                    else if( $slotSettings->MaxWin < ($totalWin * $slotSettings->CurrentDenom) ) 
-                                    {
-                                    }
-                                    else
-                                    {
+                                    if ($slotSettings->increaseRTP && $winType == 'win' && $totalWin < ($minWin * $postData['slotBet'] * $postData['slotLines'])) {
+                                    } elseif ($slotSettings->MaxWin < ($totalWin * $slotSettings->CurrentDenom)) {
+                                    } else {
                                         $minWin = $slotSettings->GetRandomPay();
-                                        if( $i > 700 ) 
-                                        {
+                                        if ($i > 700) {
                                             $minWin = 0;
                                         }
-                                        if( $slotSettings->increaseRTP && $winType == 'win' && $totalWin < ($minWin * $allbet) ) 
-                                        {
-                                        }
-                                        else if( $scattersCount >= 3 && $winType != 'bonus' ) 
-                                        {
-                                        }
-                                        else if( $totalWin <= $spinWinLimit && $winType == 'bonus' ) 
-                                        {
+                                        if ($slotSettings->increaseRTP && $winType == 'win' && $totalWin < ($minWin * $allbet)) {
+                                        } elseif ($scattersCount >= 3 && $winType != 'bonus') {
+                                        } elseif ($totalWin <= $spinWinLimit && $winType == 'bonus') {
                                             $cBank = $slotSettings->GetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : ''));
-                                            if( $cBank < $spinWinLimit ) 
-                                            {
+                                            if ($cBank < $spinWinLimit) {
                                                 $spinWinLimit = $cBank;
-                                            }
-                                            else
-                                            {
+                                            } else {
                                                 break;
                                             }
-                                        }
-                                        else if( $totalWin > 0 && $totalWin <= $spinWinLimit && $winType == 'win' ) 
-                                        {
+                                        } elseif ($totalWin > 0 && $totalWin <= $spinWinLimit && $winType == 'win') {
                                             $cBank = $slotSettings->GetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : ''));
-                                            if( $cBank < $spinWinLimit ) 
-                                            {
+                                            if ($cBank < $spinWinLimit) {
                                                 $spinWinLimit = $cBank;
-                                            }
-                                            else
-                                            {
+                                            } else {
                                                 break;
                                             }
-                                        }
-                                        else if( $totalWin == 0 && $winType == 'none' ) 
-                                        {
+                                        } elseif ($totalWin == 0 && $winType == 'none') {
                                             break;
                                         }
                                     }
                                 }
                             }
-                            if( $totalWin > 0 ) 
-                            {
+                            if ($totalWin > 0) {
                                 $slotSettings->SetBalance($totalWin);
                                 $slotSettings->SetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : ''), -1 * $totalWin);
                             }
                             $reportWin = $totalWin;
-                            if( $postData['slotEvent'] == 'freespin' ) 
-                            {
+                            if ($postData['slotEvent'] == 'freespin') {
                                 $slotSettings->SetGameData('ChaoJi888BonusWin', $slotSettings->GetGameData('ChaoJi888BonusWin') + $totalWin);
                                 $slotSettings->SetGameData('ChaoJi888TotalWin', $slotSettings->GetGameData('ChaoJi888TotalWin') + $totalWin);
                                 $totalWin = $slotSettings->GetGameData('ChaoJi888BonusWin');
                                 $Balance = $slotSettings->GetGameData('ChaoJi888FreeBalance');
-                            }
-                            else
-                            {
+                            } else {
                                 $slotSettings->SetGameData('ChaoJi888TotalWin', $totalWin);
                             }
-                            if( $scattersCount >= 3 ) 
-                            {
-                                if( $slotSettings->GetGameData('ChaoJi888FreeGames') > 0 ) 
-                                {
+                            if ($scattersCount >= 3) {
+                                if ($slotSettings->GetGameData('ChaoJi888FreeGames') > 0) {
                                     $slotSettings->SetGameData('ChaoJi888FreeBalance', $Balance);
                                     $slotSettings->SetGameData('ChaoJi888BonusWin', $totalWin);
                                     $slotSettings->SetGameData('ChaoJi888FreeGames', $slotSettings->GetGameData('ChaoJi888FreeGames') + $slotSettings->slotFreeCount);
-                                }
-                                else
-                                {
+                                } else {
                                     $slotSettings->SetGameData('ChaoJi888FreeBalance', $Balance);
                                     $slotSettings->SetGameData('ChaoJi888BonusWin', $totalWin);
                                     $slotSettings->SetGameData('ChaoJi888FreeGames', $slotSettings->slotFreeCount);
                                 }
                             }
-                            $jsSpin = '' . json_encode($reels) . '';
-                            $jsJack = '' . json_encode($slotSettings->Jackpots) . '';
+                            $jsSpin = ''.json_encode($reels).'';
+                            $jsJack = ''.json_encode($slotSettings->Jackpots).'';
                             $winString = implode(',', $lineWins);
-                            $response_log = '{"responseEvent":"spin","responseType":"' . $postData['slotEvent'] . '","serverResponse":{"lines":' . $postData['slotLines'] . ',"bet":' . $postData['slotBet'] . ',"totalFreeGames":' . $slotSettings->GetGameData('ChaoJi888FreeGames') . ',"currentFreeGames":' . $slotSettings->GetGameData('ChaoJi888CurrentFreeGame') . ',"Balance":' . $Balance . ',"afterBalance":' . $slotSettings->GetBalance() . ',"totalWin":' . $totalWin . ',"winLines":[' . $winString . '],"bonusInfo":' . $scattersStr . ',"Jackpots":' . $jsJack . ',"reelsSymbols":' . $jsSpin . '}}';
-                            $response = '{"gameSession":"","balance":{"currency":"USD","amount":' . $slotSettings->GetBalance() . ',"real":{"amount":' . $Balance . '},"bonus":{"amount":0}},"result":{"request":"spin","stake":{"lines":' . $postData['slotLines'] . ',"bet":' . $postData['slotBet'] . ',"coin":1},"totalBet":' . ($postData['slotBet'] * $postData['slotLines']) . ',"totalWin":' . $totalWin . ',"scene":"main","multiplier":1,"state":{"currentScene":"main","multiplier":1},"reels":{"set":"main","positions":[' . implode(',', $reels['rp']) . '],"view":[[' . $reels['reel1'][0] . ',' . $reels['reel2'][0] . ',' . $reels['reel3'][0] . '],[' . $reels['reel1'][1] . ',' . $reels['reel2'][1] . ',' . $reels['reel3'][1] . '],[' . $reels['reel1'][2] . ',' . $reels['reel2'][2] . ',' . $reels['reel3'][2] . ']]},"rewards":[' . $winString . '],"events":[],"roundEnded":true,"version":"1.0.2"},"requestId":1,"roundEnded":true}';
+                            $response_log = '{"responseEvent":"spin","responseType":"'.$postData['slotEvent'].'","serverResponse":{"lines":'.$postData['slotLines'].',"bet":'.$postData['slotBet'].',"totalFreeGames":'.$slotSettings->GetGameData('ChaoJi888FreeGames').',"currentFreeGames":'.$slotSettings->GetGameData('ChaoJi888CurrentFreeGame').',"Balance":'.$Balance.',"afterBalance":'.$slotSettings->GetBalance().',"totalWin":'.$totalWin.',"winLines":['.$winString.'],"bonusInfo":'.$scattersStr.',"Jackpots":'.$jsJack.',"reelsSymbols":'.$jsSpin.'}}';
+                            $response = '{"gameSession":"","balance":{"currency":"USD","amount":'.$slotSettings->GetBalance().',"real":{"amount":'.$Balance.'},"bonus":{"amount":0}},"result":{"request":"spin","stake":{"lines":'.$postData['slotLines'].',"bet":'.$postData['slotBet'].',"coin":1},"totalBet":'.($postData['slotBet'] * $postData['slotLines']).',"totalWin":'.$totalWin.',"scene":"main","multiplier":1,"state":{"currentScene":"main","multiplier":1},"reels":{"set":"main","positions":['.implode(',', $reels['rp']).'],"view":[['.$reels['reel1'][0].','.$reels['reel2'][0].','.$reels['reel3'][0].'],['.$reels['reel1'][1].','.$reels['reel2'][1].','.$reels['reel3'][1].'],['.$reels['reel1'][2].','.$reels['reel2'][2].','.$reels['reel3'][2].']]},"rewards":['.$winString.'],"events":[],"roundEnded":true,"version":"1.0.2"},"requestId":1,"roundEnded":true}';
                             $slotSettings->SaveLogReport($response_log, $postData['slotBet'], $postData['slotLines'], $reportWin, $postData['slotEvent']);
                         }
                         $slotSettings->SaveGameData();
                         $slotSettings->SaveGameDataStatic();
                         echo $response;
-                    }
-                    catch( \Exception $e ) 
-                    {
-                        if( isset($slotSettings) ) 
-                        {
+                    } catch (\Exception $e) {
+                        if (isset($slotSettings)) {
                             $slotSettings->InternalErrorSilent($e);
-                        }
-                        else
-                        {
+                        } else {
                             $strLog = '';
                             $strLog .= "\n";
-                            $strLog .= ('{"responseEvent":"error","responseType":"' . $e . '","serverResponse":"InternalError","request":' . json_encode($_REQUEST) . ',"requestRaw":' . file_get_contents('php://input') . '}');
+                            $strLog .= ('{"responseEvent":"error","responseType":"'.$e.'","serverResponse":"InternalError","request":'.json_encode($_REQUEST).',"requestRaw":'.file_get_contents('php://input').'}');
                             $strLog .= "\n";
                             $strLog .= ' ############################################### ';
                             $strLog .= "\n";
                             $slg = '';
-                            if( file_exists(storage_path('logs/') . 'GameInternal.log') ) 
-                            {
-                                $slg = file_get_contents(storage_path('logs/') . 'GameInternal.log');
+                            if (file_exists(storage_path('logs/').'GameInternal.log')) {
+                                $slg = file_get_contents(storage_path('logs/').'GameInternal.log');
                             }
-                            file_put_contents(storage_path('logs/') . 'GameInternal.log', $slg . $strLog);
+                            file_put_contents(storage_path('logs/').'GameInternal.log', $slg.$strLog);
                         }
                     }
                 }, 5);

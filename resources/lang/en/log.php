@@ -25,5 +25,5 @@ return [
     'enabled_2fa_for' => 'Enabled Two-Factor Authentication for user :name.',
     'disabled_2fa_for' => 'Disabled Two-Factor Authentication for user :name.',
     'requested_password_reset' => 'Requested password reset email.',
-    'reseted_password' => 'Reseted password using "Forgot Password" option.'
+    'reseted_password' => 'Reseted password using "Forgot Password" option.',
 ];

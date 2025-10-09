@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Http\Requests\Role
 {
     class RemoveRoleRequest extends \VanguardLTE\Http\Requests\Request
@@ -7,6 +8,7 @@ namespace VanguardLTE\Http\Requests\Role
         {
             return $this->route('role')->removable;
         }
+
         public function rules()
         {
             return [];

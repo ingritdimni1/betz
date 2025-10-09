@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Http\Requests\Permission
 {
     class BasePermissionRequest extends \VanguardLTE\Http\Requests\Request

@@ -10,6 +10,7 @@ trait AuthorizationRoleTrait
 {
     /**
      * Get cached permissions for this role.
+     *
      * @return mixed
      */
     public function cachedPermissions()
@@ -21,7 +22,6 @@ trait AuthorizationRoleTrait
 
     /**
      * Override "save" role method to clear role cache.
-     * @param array $options
      */
     public function save(array $options = [])
     {
@@ -31,7 +31,6 @@ trait AuthorizationRoleTrait
 
     /**
      * Override "delete" role method to clear role cache.
-     * @param array $options
      */
     public function delete(array $options = [])
     {
@@ -50,6 +49,7 @@ trait AuthorizationRoleTrait
 
     /**
      * Many-to-Many relations with the permission model.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function permissions()
@@ -60,7 +60,7 @@ trait AuthorizationRoleTrait
     /**
      * Checks if the role has a permission by its name.
      *
-     * @param string $name Permission name.
+     * @param  string  $name  Permission name.
      * @return bool
      */
     public function hasPermission($name)
@@ -73,8 +73,7 @@ trait AuthorizationRoleTrait
     /**
      * Save the inputted permissions.
      *
-     * @param mixed $inputPermissions
-     *
+     * @param  mixed  $inputPermissions
      * @return void
      */
     public function savePermissions($inputPermissions)
@@ -91,8 +90,7 @@ trait AuthorizationRoleTrait
     /**
      * Attach permission to current role.
      *
-     * @param object|array $permission
-     *
+     * @param  object|array  $permission
      * @return void
      */
     public function attachPermission($permission)
@@ -113,8 +111,7 @@ trait AuthorizationRoleTrait
     /**
      * Detach permission from current role.
      *
-     * @param object|array $permission
-     *
+     * @param  object|array  $permission
      * @return void
      */
     public function detachPermission($permission)
@@ -135,8 +132,7 @@ trait AuthorizationRoleTrait
     /**
      * Attach multiple permissions to current role.
      *
-     * @param mixed $permissions
-     *
+     * @param  mixed  $permissions
      * @return void
      */
     public function attachPermissions($permissions)
@@ -149,8 +145,7 @@ trait AuthorizationRoleTrait
     /**
      * Detach multiple permissions from current role
      *
-     * @param mixed $permissions
-     *
+     * @param  mixed  $permissions
      * @return void
      */
     public function detachPermissions($permissions)
@@ -162,7 +157,8 @@ trait AuthorizationRoleTrait
 
     /**
      * Sync role permissions.
-     * @param $permissions array Permission IDs.
+     *
+     * @param  $permissions  array Permission IDs.
      */
     public function syncPermissions(array $permissions)
     {
@@ -173,6 +169,7 @@ trait AuthorizationRoleTrait
 
     /**
      * Get permissions cache key.
+     *
      * @return string
      */
     private function getCacheKey()

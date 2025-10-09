@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Games\OneShotFishingCQ9
 {
     set_time_limit(5);
@@ -8,62 +9,48 @@ namespace VanguardLTE\Games\OneShotFishingCQ9
         {
             function get_($request, $game)
             {
-                \DB::transaction(function() use ($request, $game)
-                {
-                    try
-                    {
+                \DB::transaction(function () use ($game) {
+                    try {
                         $userId = \Auth::id();
-                        if( $userId == null ) 
-                        {
+                        if ($userId == null) {
                             $response = '{"responseEvent":"error","responseType":"","serverResponse":"invalid login"}';
-                            exit( $response );
+                            exit($response);
                         }
                         $slotSettings = new SlotSettings($game, $userId);
-                        if( !$slotSettings->is_active() ) 
-                        {
+                        if (! $slotSettings->is_active()) {
                             $response = '{"responseEvent":"error","responseType":"","serverResponse":"Game is disabled"}';
-                            exit( $response );
+                            exit($response);
                         }
                         $postData = json_decode(trim(file_get_contents('php://input')), true);
-                        if( isset($_GET['command']) ) 
-                        {
+                        if (isset($_GET['command'])) {
                             $response = '';
-                            if( $_GET['command'] == 'getServerToken' ) 
-                            {
+                            if ($_GET['command'] == 'getServerToken') {
                                 $response = '';
                             }
-                            if( $_GET['command'] == 'getOrderInfo' ) 
-                            {
+                            if ($_GET['command'] == 'getOrderInfo') {
                                 $response = '';
                             }
-                            exit( $response );
+                            exit($response);
                         }
-                        if( isset($postData['command']) && $postData['command'] == 'CheckAuth' ) 
-                        {
-                            $response = '{"responseEvent":"CheckAuth","startTimeSystem":' . (time() * 1000) . ',"userId":' . $userId . ',"shop_id":' . $slotSettings->shop_id . ',"username":"' . $slotSettings->username . '"}';
-                            exit( $response );
+                        if (isset($postData['command']) && $postData['command'] == 'CheckAuth') {
+                            $response = '{"responseEvent":"CheckAuth","startTimeSystem":'.(time() * 1000).',"userId":'.$userId.',"shop_id":'.$slotSettings->shop_id.',"username":"'.$slotSettings->username.'"}';
+                            exit($response);
                         }
-                    }
-                    catch( \Exception $e ) 
-                    {
-                        if( isset($slotSettings) ) 
-                        {
+                    } catch (\Exception $e) {
+                        if (isset($slotSettings)) {
                             $slotSettings->InternalErrorSilent($e);
-                        }
-                        else
-                        {
+                        } else {
                             $strLog = '';
                             $strLog .= "\n";
-                            $strLog .= ('{"responseEvent":"error","responseType":"' . $e . '","serverResponse":"InternalError","request":' . json_encode($_REQUEST) . ',"requestRaw":' . file_get_contents('php://input') . '}');
+                            $strLog .= ('{"responseEvent":"error","responseType":"'.$e.'","serverResponse":"InternalError","request":'.json_encode($_REQUEST).',"requestRaw":'.file_get_contents('php://input').'}');
                             $strLog .= "\n";
                             $strLog .= ' ############################################### ';
                             $strLog .= "\n";
                             $slg = '';
-                            if( file_exists(storage_path('logs/') . 'GameInternal.log') ) 
-                            {
-                                $slg = file_get_contents(storage_path('logs/') . 'GameInternal.log');
+                            if (file_exists(storage_path('logs/').'GameInternal.log')) {
+                                $slg = file_get_contents(storage_path('logs/').'GameInternal.log');
                             }
-                            file_put_contents(storage_path('logs/') . 'GameInternal.log', $slg . $strLog);
+                            file_put_contents(storage_path('logs/').'GameInternal.log', $slg.$strLog);
                         }
                     }
                 }, 5);

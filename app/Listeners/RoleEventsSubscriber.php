@@ -3,9 +3,9 @@
 namespace VanguardLTE\Listeners;
 
 use VanguardLTE\Events\Role\Created;
+use VanguardLTE\Events\Role\Deleted;
 use VanguardLTE\Events\Role\PermissionsUpdated;
 use VanguardLTE\Events\Role\Updated;
-use VanguardLTE\Events\Role\Deleted;
 use VanguardLTE\Services\Logging\UserActivity\Logger;
 
 class RoleEventsSubscriber
@@ -62,7 +62,7 @@ class RoleEventsSubscriber
      */
     public function subscribe($events)
     {
-        $class = 'VanguardLTE\Listeners\RoleEventsSubscriber';
+        $class = \VanguardLTE\Listeners\RoleEventsSubscriber::class;
 
         $events->listen(Created::class, "{$class}@onCreate");
         $events->listen(Updated::class, "{$class}@onUpdate");

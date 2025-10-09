@@ -10,23 +10,23 @@ class HtmlServiceProvider extends BaseHtmlServiceProvider
 {
     protected function registerHtmlBuilder()
     {
-        $this->app->singleton('html', function($app) {
+        $this->app->singleton('html', function ($app) {
 
-   /*          if (env('FORCE_SSL')) {
-                $app['url']->forceScheme('https');
-            }
+            /*          if (env('FORCE_SSL')) {
+                         $app['url']->forceScheme('https');
+                     }
 
-  */           return new HtmlBuilder($app['url'], $app['view']);
+  */ return new HtmlBuilder($app['url'], $app['view']);
         });
     }
 
     protected function registerFormBuilder()
     {
-        $this->app->singleton('form', function($app) {
+        $this->app->singleton('form', function ($app) {
 
-/*             if (env('FORCE_SSL')) {
-                $app['url']->forceScheme('https');
-            } */
+            /*             if (env('FORCE_SSL')) {
+                            $app['url']->forceScheme('https');
+                        } */
 
             $form = new FormBuilder($app['html'], $app['url'], $app['view'], $app['session.store']->token());
 

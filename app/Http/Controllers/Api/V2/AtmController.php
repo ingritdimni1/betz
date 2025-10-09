@@ -10,16 +10,16 @@ class AtmController extends Controller
     public function index(Request $request)
     {
         $payload = $request->json()->all();
-        $method = $payload['controller'] . ucwords($payload['action']);
+        $method = $payload['controller'].ucwords($payload['action']);
+
         return $this->$method($request);
     }
 
-    function atmPing($request)
+    public function atmPing($request)
     {
         $response = [
-            'success' => "true",
-            'data' =>
-            [
+            'success' => 'true',
+            'data' => [
                 'atm_id' => 'ide2WtBxo8sC7M6yF$#@ImBx',
                 'atm_name' => '',
                 'atm_parent_id' => '5538',
@@ -36,45 +36,46 @@ class AtmController extends Controller
                 'atm_enabled' => '1',
                 'atm_emptyrecycle' => '0',
                 'atm_forceupdate' => '0',
-            ]
+            ],
         ];
+
         return response()->json($response);
     }
 
     public function atmreadterminals(Request $request)
     {
         $response = [
-            'success' => "true",
-            'data' =>
-            [
+            'success' => 'true',
+            'data' => [
                 [
-                    "id" => "5540",
-                    "name" => "Math",
-                    "terminal" => "Mestlux",
-                    "score" => "9500"
+                    'id' => '5540',
+                    'name' => 'Math',
+                    'terminal' => 'Mestlux',
+                    'score' => '9500',
                 ],
                 [
-                    "id" => "5540",
-                    "name" => "Math",
-                    "terminal" => "Mestlux",
-                    "score" => "8000"
-                ]
-            ]
+                    'id' => '5540',
+                    'name' => 'Math',
+                    'terminal' => 'Mestlux',
+                    'score' => '8000',
+                ],
+            ],
         ];
+
         return response()->json($response);
     }
 
     public function playerReadcredits(Request $request)
     {
         $response = [
-            'success' => "true",
-            'data' =>
-            [
-                "player_id" => "5540",
-                "player_name" => "",
-                "player_score" => "9500"
-            ]
+            'success' => 'true',
+            'data' => [
+                'player_id' => '5540',
+                'player_name' => '',
+                'player_score' => '9500',
+            ],
         ];
+
         return response()->json($response);
     }
 }

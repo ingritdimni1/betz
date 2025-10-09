@@ -14,7 +14,6 @@ interface PermissionRepository
     /**
      * Finds the permission by given id.
      *
-     * @param $id
      * @return mixed
      */
     public function find($id);
@@ -22,7 +21,6 @@ interface PermissionRepository
     /**
      * Creates new permission from provided data.
      *
-     * @param array $data
      * @return mixed
      */
     public function create(array $data);
@@ -30,8 +28,6 @@ interface PermissionRepository
     /**
      * Updates specified permission.
      *
-     * @param $id
-     * @param array $data
      * @return mixed
      */
     public function update($id, array $data);
@@ -39,7 +35,6 @@ interface PermissionRepository
     /**
      * Remove specified permission from repository.
      *
-     * @param $id
      * @return mixed
      */
     public function delete($id);

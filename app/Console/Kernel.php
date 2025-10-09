@@ -1,15 +1,16 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Console
 {
     class Kernel extends \Illuminate\Foundation\Console\Kernel
     {
         protected $commands = [];
+
         protected function schedule(\Illuminate\Console\Scheduling\Schedule $schedule)
         {
             $schedule->command('queue:work --daemon')->everyMinute()->withoutOverlapping();
-            $schedule->call(function()
-            {
-                \Spatie\DbDumper\Databases\MySql::create()->setDbName(config('database.connections.mysql.database'))->setUserName(config('database.connections.mysql.username'))->setPassword(config('database.connections.mysql.password'))->dumpToFile(base_path() . '/backups/' . date('Hi_dmY') . '.sql');
+            $schedule->call(function () {
+                \Spatie\DbDumper\Databases\MySql::create()->setDbName(config('database.connections.mysql.database'))->setUserName(config('database.connections.mysql.username'))->setPassword(config('database.connections.mysql.password'))->dumpToFile(base_path().'/backups/'.date('Hi_dmY').'.sql');
             })->daily();
             $_obf_0D2F242F2D052B0938193F2D0D2F192F27160616153332 = 45;
             $schedule->call(new Schedules\Tournaments($_obf_0D2F242F2D052B0938193F2D0D2F192F27160616153332))->everyMinute();
@@ -31,9 +32,10 @@ namespace VanguardLTE\Console
             $schedule->call(new Schedules\EveryFiveMinutesCleanUp($_obf_0D2F242F2D052B0938193F2D0D2F192F27160616153332))->everyFiveMinutes();
             $schedule->call(new Schedules\EveryMinuteCleanUp($_obf_0D2F242F2D052B0938193F2D0D2F192F27160616153332))->everyMinute();
         }
+
         protected function commands()
         {
-            require(base_path('routes/console.php'));
+            require base_path('routes/console.php');
         }
     }
 

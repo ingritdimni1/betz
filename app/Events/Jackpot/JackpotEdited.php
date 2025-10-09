@@ -23,5 +23,4 @@ class JackpotEdited
     {
         return $this->editedJackpot;
     }
-
 }

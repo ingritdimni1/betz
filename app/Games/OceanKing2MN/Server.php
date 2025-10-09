@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Games\OceanKing2MN
 {
     set_time_limit(5);
@@ -8,34 +9,28 @@ namespace VanguardLTE\Games\OceanKing2MN
         {
             function get_($request, $game)
             {
-                \DB::transaction(function() use ($request, $game)
-                {
-                    try
-                    {
+                \DB::transaction(function () use ($game) {
+                    try {
                         $userId = \Auth::id();
-                        if( $userId == null ) 
-                        {
+                        if ($userId == null) {
                             $response = '{"responseEvent":"error","responseType":"","serverResponse":"invalid login"}';
-                            exit( $response );
+                            exit($response);
                         }
                         $slotSettings = new SlotSettings($game, $userId);
-                        if( !$slotSettings->is_active() ) 
-                        {
+                        if (! $slotSettings->is_active()) {
                             $response = '{"responseEvent":"error","responseType":"","serverResponse":"Game is disabled"}';
-                            exit( $response );
+                            exit($response);
                         }
                         $postData = json_decode(trim(file_get_contents('php://input')), true);
-                        if( isset($postData['command']) && $postData['command'] == 'CheckAuth' ) 
-                        {
-                            $response = '{"responseEvent":"CheckAuth","startTimeSystem":' . (time() * 1000) . ',"userId":' . $userId . ',"shop_id":' . $slotSettings->shop_id . ',"username":"' . $slotSettings->username . '"}';
-                            exit( $response );
+                        if (isset($postData['command']) && $postData['command'] == 'CheckAuth') {
+                            $response = '{"responseEvent":"CheckAuth","startTimeSystem":'.(time() * 1000).',"userId":'.$userId.',"shop_id":'.$slotSettings->shop_id.',"username":"'.$slotSettings->username.'"}';
+                            exit($response);
                         }
                         $balanceInCents = round(sprintf('%01.2f', $slotSettings->GetBalance()) * 100);
                         $result_tmp = [];
                         $aid = '';
-                        $aid = (string)$postData['action'];
-                        switch( $aid ) 
-                        {
+                        $aid = (string) $postData['action'];
+                        switch ($aid) {
                             case 'Init1':
                             case 'Init2':
                             case 'Act61':
@@ -44,23 +39,21 @@ namespace VanguardLTE\Games\OceanKing2MN
                             case 'getBalance':
                                 $gameBets = $slotSettings->Bet;
                                 $denoms = [];
-                                $denoms[] = '' . ($slotSettings->CurrentDenom * 100) . '';
-                                foreach( $slotSettings->Denominations as $b ) 
-                                {
-                                    $denoms[] = '' . ($b * 100) . '';
+                                $denoms[] = ''.($slotSettings->CurrentDenom * 100).'';
+                                foreach ($slotSettings->Denominations as $b) {
+                                    $denoms[] = ''.($b * 100).'';
                                 }
-                                $result_tmp[0] = '{"action":"' . $aid . '","nickName":"' . $slotSettings->username . '","currency":"' . $slotSettings->slotCurrency . '","Credit":' . $balanceInCents . '}';
+                                $result_tmp[0] = '{"action":"'.$aid.'","nickName":"'.$slotSettings->username.'","currency":"'.$slotSettings->slotCurrency.'","Credit":'.$balanceInCents.'}';
                                 break;
                             case 'Act41':
                                 $gameBets = $slotSettings->Bet;
                                 $denoms = [];
-                                $denoms[] = '' . ($slotSettings->CurrentDenom * 100) . '';
-                                foreach( $slotSettings->Denominations as $b ) 
-                                {
-                                    $denoms[] = '' . ($b * 100) . '';
+                                $denoms[] = ''.($slotSettings->CurrentDenom * 100).'';
+                                foreach ($slotSettings->Denominations as $b) {
+                                    $denoms[] = ''.($b * 100).'';
                                 }
                                 $balanceInCents = floor(sprintf('%01.2f', $slotSettings->GetBalance()));
-                                $result_tmp[0] = '{"action":"' . $aid . '","nickName":"' . $slotSettings->username . '","currency":"' . $slotSettings->slotCurrency . '","Credit":' . $balanceInCents . '}';
+                                $result_tmp[0] = '{"action":"'.$aid.'","nickName":"'.$slotSettings->username.'","currency":"'.$slotSettings->slotCurrency.'","Credit":'.$balanceInCents.'}';
                                 break;
                             case 'Act18':
                                 $fishPays = [];
@@ -89,96 +82,78 @@ namespace VanguardLTE\Games\OceanKing2MN
                                 $fishPays[23] = 100;
                                 $fishPays[24] = 100;
                                 $fishPays[25] = 150;
-                                if( isset($postData['reqDat']) ) 
-                                {
+                                if (isset($postData['reqDat'])) {
                                     $aid = 'Act19';
                                     $hits = $postData['reqDat']['hits'];
                                     $lose = false;
-                                    for( $i = 0; $i < 2000; $i++ ) 
-                                    {
+                                    for ($i = 0; $i < 2000; $i++) {
                                         $allbet = 0;
                                         $totalWin = 0;
                                         $bank = $slotSettings->GetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : ''));
-                                        foreach( $hits as $key => $hit ) 
-                                        {
+                                        foreach ($hits as $key => $hit) {
                                             $fishType = $hit['fishType'];
                                             $bet = $hit['bet'];
                                             $cwin = 0;
-                                            if( !isset($fishPays[$fishType]) ) 
-                                            {
+                                            if (! isset($fishPays[$fishType])) {
                                                 $cwin = $postData['reqDat']['hits'][$key]['win'];
-                                            }
-                                            else
-                                            {
+                                            } else {
                                                 $cwin = $fishPays[$fishType] * $bet;
                                             }
-                                            if( $cwin != $postData['reqDat']['hits'][$key] ) 
-                                            {
+                                            if ($cwin != $postData['reqDat']['hits'][$key]) {
                                                 $cwin = $postData['reqDat']['hits'][$key]['win'];
                                             }
-                                            if( $lose ) 
-                                            {
+                                            if ($lose) {
                                                 $postData['reqDat']['hits'][$key]['win'] = 0;
                                                 $cwin = 0;
                                             }
                                             $totalWin += $cwin;
                                             $allbet += $bet;
                                         }
-                                        if( $totalWin <= $bank ) 
-                                        {
+                                        if ($totalWin <= $bank) {
                                             break;
                                         }
-                                        if( $i > 100 ) 
-                                        {
+                                        if ($i > 100) {
                                             $lose = true;
                                         }
                                     }
-                                    if( $allbet < 0.0001 || $slotSettings->GetBalance() < $allbet ) 
-                                    {
+                                    if ($allbet < 0.0001 || $slotSettings->GetBalance() < $allbet) {
                                         $response = '{"responseEvent":"error","responseType":"bet","serverResponse":"invalid bet state"}';
-                                        exit( $response );
+                                        exit($response);
                                     }
                                     $bankSum = $allbet / 100 * $slotSettings->GetPercent();
                                     $slotSettings->SetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : ''), $bankSum, 'bet');
                                     $slotSettings->UpdateJackpots($allbet);
                                     $slotSettings->SetBalance(-1 * $allbet, 'bet');
-                                    if( $totalWin > 0 ) 
-                                    {
+                                    if ($totalWin > 0) {
                                         $slotSettings->SetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : ''), -1 * $totalWin);
                                         $slotSettings->SetBalance($totalWin);
                                     }
-                                    $jsSet = '{"dealerCard":"","gambleState":"","totalWin":' . $totalWin . ',"afterBalance":' . $balanceInCents . ',"Balance":' . $balanceInCents . '}';
-                                    $response = '{"responseEvent":"gambleResult","serverResponse":' . $jsSet . '}';
+                                    $jsSet = '{"dealerCard":"","gambleState":"","totalWin":'.$totalWin.',"afterBalance":'.$balanceInCents.',"Balance":'.$balanceInCents.'}';
+                                    $response = '{"responseEvent":"gambleResult","serverResponse":'.$jsSet.'}';
                                     $slotSettings->SaveLogReport($response, $allbet, 1, $totalWin, 'bet');
                                 }
                                 $balanceInCents = floor(sprintf('%01.2f', $slotSettings->GetBalance()));
-                                $result_tmp[0] = '{"action":"' . $aid . '","hits":' . json_encode($postData) . ',"nickName":"' . $slotSettings->username . '","currency":"' . $slotSettings->slotCurrency . '","Credit":' . $balanceInCents . '}';
+                                $result_tmp[0] = '{"action":"'.$aid.'","hits":'.json_encode($postData).',"nickName":"'.$slotSettings->username.'","currency":"'.$slotSettings->slotCurrency.'","Credit":'.$balanceInCents.'}';
                                 break;
                         }
                         $response = $result_tmp[0];
                         $slotSettings->SaveGameData();
-                        echo ':::' . $response;
-                    }
-                    catch( \Exception $e ) 
-                    {
-                        if( isset($slotSettings) ) 
-                        {
+                        echo ':::'.$response;
+                    } catch (\Exception $e) {
+                        if (isset($slotSettings)) {
                             $slotSettings->InternalErrorSilent($e);
-                        }
-                        else
-                        {
+                        } else {
                             $strLog = '';
                             $strLog .= "\n";
-                            $strLog .= ('{"responseEvent":"error","responseType":"' . $e . '","serverResponse":"InternalError","request":' . json_encode($_REQUEST) . ',"requestRaw":' . file_get_contents('php://input') . '}');
+                            $strLog .= ('{"responseEvent":"error","responseType":"'.$e.'","serverResponse":"InternalError","request":'.json_encode($_REQUEST).',"requestRaw":'.file_get_contents('php://input').'}');
                             $strLog .= "\n";
                             $strLog .= ' ############################################### ';
                             $strLog .= "\n";
                             $slg = '';
-                            if( file_exists(storage_path('logs/') . 'GameInternal.log') ) 
-                            {
-                                $slg = file_get_contents(storage_path('logs/') . 'GameInternal.log');
+                            if (file_exists(storage_path('logs/').'GameInternal.log')) {
+                                $slg = file_get_contents(storage_path('logs/').'GameInternal.log');
                             }
-                            file_put_contents(storage_path('logs/') . 'GameInternal.log', $slg . $strLog);
+                            file_put_contents(storage_path('logs/').'GameInternal.log', $slg.$strLog);
                         }
                     }
                 }, 5);

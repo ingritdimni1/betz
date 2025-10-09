@@ -2,11 +2,9 @@
 
 namespace VanguardLTE\Listeners;
 
-use VanguardLTE\Activity;
-use VanguardLTE\Events\Jackpot\NewJackpot;
-use VanguardLTE\Events\Jackpot\JackpotEdited;
 use VanguardLTE\Events\Jackpot\DeleteJackpot;
-use VanguardLTE\Events\User\UserEventContract;
+use VanguardLTE\Events\Jackpot\JackpotEdited;
+use VanguardLTE\Events\Jackpot\NewJackpot;
 use VanguardLTE\JPG;
 use VanguardLTE\Services\Logging\UserActivity\Logger;
 
@@ -26,7 +24,7 @@ class JackpotEventsSubscriber
     {
         $jackpot = $event->getNewJackpot();
 
-        //$this->logger->log('New Jackpot / ' . $jackpot->name . ', Shop ' . $jackpot->shop_id, $type = 'system', 'jackpot', $jackpot->id);
+        // $this->logger->log('New Jackpot / ' . $jackpot->name . ', Shop ' . $jackpot->shop_id, $type = 'system', 'jackpot', $jackpot->id);
     }
 
     public function onJackpotEdited(JackpotEdited $event)
@@ -37,35 +35,32 @@ class JackpotEventsSubscriber
 
         $changed = false;
 
-        $text = 'Update ' . $jackpot->name . ' | ';
-        $textOriginal = 'Update ' . $jackpot->name . ' | ';
+        $text = 'Update '.$jackpot->name.' | ';
+        $textOriginal = 'Update '.$jackpot->name.' | ';
 
-        foreach(['name' => 'Name', 'start_balance' => 'Start Balance', 'pay_sum' => 'Trigger',
-                    'percent' => 'Percent', 'view' => 'Status'] AS $column=>$title){
+        foreach (['name' => 'Name', 'start_balance' => 'Start Balance', 'pay_sum' => 'Trigger',
+            'percent' => 'Percent', 'view' => 'Status'] as $column => $title) {
 
-            if( isset($original[$column]) ){
+            if (isset($original[$column])) {
                 $textOriginal .= $this->template($column, $title, $original[$column]);
-            } else{
-                $textOriginal .= ' ' .$title. ' =  | ';
+            } else {
+                $textOriginal .= ' '.$title.' =  | ';
             }
-            if( isset($changes[$column]) ){
+            if (isset($changes[$column])) {
                 $changed = true;
                 $text .= $this->template($column, $title, $changes[$column]);
-            } else{
-                if( isset($original[$column]) ){
+            } else {
+                if (isset($original[$column])) {
                     $text .= $this->template($column, $title, $original[$column]);
-                } else{
-                    $text .= ' ' .$title. ' =  | ';
+                } else {
+                    $text .= ' '.$title.' =  | ';
                 }
             }
         }
 
-
-
-        if(!$changed){
+        if (! $changed) {
             return;
         }
-
 
         $this->logger->log($text, $textOriginal, $type = 'system', 'jackpot', $jackpot->id);
     }
@@ -74,20 +69,22 @@ class JackpotEventsSubscriber
     {
         $jackpot = $event->getDeleteJackpot();
 
-        //$this->logger->log('Delete Jackpot / ' . $jackpot->name . ', Shop ' . $jackpot->shop_id, $type = 'system', 'jackpot', $jackpot->id);
+        // $this->logger->log('Delete Jackpot / ' . $jackpot->name . ', Shop ' . $jackpot->shop_id, $type = 'system', 'jackpot', $jackpot->id);
     }
 
-    public function template($key, $title, $value){
+    public function template($key, $title, $value)
+    {
         $text = '';
-        if($key == 'view'){
-            $text .= ' ' .$title. ' = ' . ($value ? 'Active' : 'Disabled' ) . ' | ';
-        } elseif($key == 'start_balance'){
-            $text .= ' ' .$title. ' = ' . (JPG::$values['start_balance'][$value] ? 'Active' : 'Disabled' ) . ' | ';
-        } elseif($key == 'pay_sum'){
-            $text .= ' ' .$title. ' = ' . (JPG::$values['pay_sum'][$value] ? 'Active' : 'Disabled' ) . ' | ';
+        if ($key == 'view') {
+            $text .= ' '.$title.' = '.($value ? 'Active' : 'Disabled').' | ';
+        } elseif ($key == 'start_balance') {
+            $text .= ' '.$title.' = '.(JPG::$values['start_balance'][$value] ? 'Active' : 'Disabled').' | ';
+        } elseif ($key == 'pay_sum') {
+            $text .= ' '.$title.' = '.(JPG::$values['pay_sum'][$value] ? 'Active' : 'Disabled').' | ';
         } else {
-            $text .= ' ' . $title. ' = ' . $value . ' | ';
+            $text .= ' '.$title.' = '.$value.' | ';
         }
+
         return $text;
     }
 
@@ -98,7 +95,7 @@ class JackpotEventsSubscriber
      */
     public function subscribe($events)
     {
-        $class = 'VanguardLTE\Listeners\JackpotEventsSubscriber';
+        $class = \VanguardLTE\Listeners\JackpotEventsSubscriber::class;
 
         $events->listen(NewJackpot::class, "{$class}@onNewJackpot");
         $events->listen(JackpotEdited::class, "{$class}@onJackpotEdited");

@@ -1,9 +1,11 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Http\Middleware
 {
     class TrustProxies extends \Illuminate\Http\Middleware\TrustProxies
     {
         protected $proxies = null;
+
         protected $headers = \Illuminate\Http\Request::HEADER_X_FORWARDED_FOR | \Illuminate\Http\Request::HEADER_X_FORWARDED_HOST | \Illuminate\Http\Request::HEADER_X_FORWARDED_PORT | \Illuminate\Http\Request::HEADER_X_FORWARDED_PROTO | \Illuminate\Http\Request::HEADER_X_FORWARDED_AWS_ELB;
     }
 

@@ -10,15 +10,16 @@ class UserModel extends Model
 {
     use HasFactory;
 
-    static function getTerminals($where, $limit = 20)
+    public static function getTerminals($where, $limit = 20)
     {
-//        $user_tbl = '';
+        //        $user_tbl = '';
         $result = DB::table('users')
             ->select(
                 'users.*'
             )
             ->whereRaw($where)
             ->paginate($limit);
+
         return $result;
     }
 }

@@ -2,12 +2,11 @@
 
 namespace VanguardLTE\Listeners;
 
+use VanguardLTE\Events\HappyHours\DeleteHappyHour;
 use VanguardLTE\Events\HappyHours\HappyHourEdited;
 use VanguardLTE\Events\HappyHours\NewHappyHour;
-use VanguardLTE\Events\HappyHours\DeleteHappyHour;
-use VanguardLTE\Services\Logging\UserActivity\Logger;
-
 use VanguardLTE\HappyHour;
+use VanguardLTE\Services\Logging\UserActivity\Logger;
 
 class HappyHourEventsSubscriber
 {
@@ -25,7 +24,7 @@ class HappyHourEventsSubscriber
     {
         $happyhour = $event->getNewHappyHour();
 
-        //$this->logger->log('New HappyHour / ' . $happyhour->id . ', Shop ' . $happyhour->shop_id, $type = 'system', 'happyhour', $happyhour->id);
+        // $this->logger->log('New HappyHour / ' . $happyhour->id . ', Shop ' . $happyhour->shop_id, $type = 'system', 'happyhour', $happyhour->id);
     }
 
     public function onHappyHourEdited(HappyHourEdited $event)
@@ -34,37 +33,36 @@ class HappyHourEventsSubscriber
         $original = $happyhour->getOriginal();
         $changes = $happyhour->getChanges();
 
-        $text = 'Update HH ' . $happyhour->id . ' | ';
-        $textOriginal = 'Update HH ' . $happyhour->id . ' | ';
+        $text = 'Update HH '.$happyhour->id.' | ';
+        $textOriginal = 'Update HH '.$happyhour->id.' | ';
 
-        foreach(['multiplier' => 'Multiplier', 'wager' => 'Wager', 'time' => 'Time',
-                    'status' => 'Status'] AS $column=>$title){
+        foreach (['multiplier' => 'Multiplier', 'wager' => 'Wager', 'time' => 'Time',
+            'status' => 'Status'] as $column => $title) {
 
-            if( isset($original[$column]) ){
+            if (isset($original[$column])) {
                 $textOriginal .= $this->template($column, $title, $original[$column]);
-            } else{
-                $textOriginal .= ' ' .$title. ' =  | ';
+            } else {
+                $textOriginal .= ' '.$title.' =  | ';
             }
-            if( isset($changes[$column]) ){
+            if (isset($changes[$column])) {
                 $changed = true;
                 $text .= $this->template($column, $title, $changes[$column]);
-            } else{
-                if( isset($original[$column]) ){
+            } else {
+                if (isset($original[$column])) {
                     $text .= $this->template($column, $title, $original[$column]);
-                } else{
-                    $text .= ' ' .$title. ' =  | ';
+                } else {
+                    $text .= ' '.$title.' =  | ';
                 }
             }
         }
 
-        if(!$changed){
+        if (! $changed) {
             return;
         }
 
-        if(!$changed){
+        if (! $changed) {
             return;
         }
-
 
         $this->logger->log($text, $textOriginal, $type = 'system', 'happyhour', $happyhour->id);
     }
@@ -72,19 +70,20 @@ class HappyHourEventsSubscriber
     public function onDeleteHappyHour(DeleteHappyHour $event)
     {
         $happyhour = $event->getDeleteHappyHour();
-        //$this->logger->log('Delete HappyHour / ' . $happyhour->id . ', Shop ' . $happyhour->shop_id, $type = 'system', 'happyhour', $happyhour->id);
+        // $this->logger->log('Delete HappyHour / ' . $happyhour->id . ', Shop ' . $happyhour->shop_id, $type = 'system', 'happyhour', $happyhour->id);
     }
 
-    public function template($key, $title, $value){
+    public function template($key, $title, $value)
+    {
         $text = '';
-        if($key == 'time'){
-            $text .= ' ' .$title. ' = ' . (HappyHour::$values['time'][$value]) . ' | ';
+        if ($key == 'time') {
+            $text .= ' '.$title.' = '.(HappyHour::$values['time'][$value]).' | ';
         } else {
-            $text .= ' ' . $title. ' = ' . $value . ' | ';
+            $text .= ' '.$title.' = '.$value.' | ';
         }
+
         return $text;
     }
-
 
     /**
      * Register the listeners for the subscriber.
@@ -93,7 +92,7 @@ class HappyHourEventsSubscriber
      */
     public function subscribe($events)
     {
-        $class = 'VanguardLTE\Listeners\HappyHourEventsSubscriber';
+        $class = \VanguardLTE\Listeners\HappyHourEventsSubscriber::class;
 
         $events->listen(NewHappyHour::class, "{$class}@onNewHappyHour");
         $events->listen(HappyHourEdited::class, "{$class}@onHappyHourEdited");

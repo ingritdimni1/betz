@@ -25,5 +25,5 @@ return [
     'enabled_2fa_for' => 'Aktivirao je Two-Factor autentifikaciju za korisnika :name.',
     'disabled_2fa_for' => 'Disabled Two-Factor autentifikaciju za korisnika :name.',
     'requested_password_reset' => 'Zatražio je e-mail za obnavljanje lozinke.',
-    'reseted_password' => 'Obnovio je lozinku korišćenjem opcije "Zaboravljena lozinka".'
+    'reseted_password' => 'Obnovio je lozinku korišćenjem opcije "Zaboravljena lozinka".',
 ];

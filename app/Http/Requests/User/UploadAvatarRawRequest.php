@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Http\Requests\User
 {
     class UploadAvatarRawRequest extends \VanguardLTE\Http\Requests\BinaryFileUploadRequest
@@ -7,6 +8,7 @@ namespace VanguardLTE\Http\Requests\User
         {
             return ['file' => 'required|image'];
         }
+
         public function messages()
         {
             return ['file.required' => 'The file is required.'];

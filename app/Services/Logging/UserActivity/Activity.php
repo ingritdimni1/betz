@@ -2,8 +2,8 @@
 
 namespace VanguardLTE\Services\Logging\UserActivity;
 
-use VanguardLTE\User;
 use Illuminate\Database\Eloquent\Model;
+use VanguardLTE\User;
 
 class Activity extends Model
 {

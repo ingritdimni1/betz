@@ -1,34 +1,41 @@
-<?php 
+<?php
+
 namespace VanguardLTE
 {
     class Payment extends \Illuminate\Database\Eloquent\Model
     {
         protected $table = 'payments';
+
         protected $fillable = [
-            'user_id', 
-            'sum', 
-            'currency', 
-            'credit_id', 
-            'status', 
-            'system', 
-            'shop_id'
+            'user_id',
+            'sum',
+            'currency',
+            'credit_id',
+            'status',
+            'system',
+            'shop_id',
         ];
+
         public $timestamps = false;
+
         public static function boot()
         {
             parent::boot();
         }
+
         public function credit()
         {
-            return $this->hasOne('VanguardLTE\Credit', 'id', 'credit_id');
+            return $this->hasOne(\VanguardLTE\Credit::class, 'id', 'credit_id');
         }
+
         public function user()
         {
-            return $this->hasOne('VanguardLTE\User', 'id', 'user_id');
+            return $this->hasOne(\VanguardLTE\User::class, 'id', 'user_id');
         }
+
         public function shop()
         {
-            return $this->hasOne('VanguardLTE\Shop', 'id', 'shop_id');
+            return $this->hasOne(\VanguardLTE\Shop::class, 'id', 'shop_id');
         }
     }
 

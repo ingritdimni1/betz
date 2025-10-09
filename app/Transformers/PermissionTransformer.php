@@ -14,9 +14,9 @@ class PermissionTransformer extends TransformerAbstract
             'name' => $permission->name,
             'display_name' => $permission->display_name,
             'description' => $permission->description,
-            'removable' => (boolean) $permission->removable,
+            'removable' => (bool) $permission->removable,
             'updated_at' => (string) $permission->updated_at,
-            'created_at' => (string) $permission->created_at
+            'created_at' => (string) $permission->created_at,
         ];
     }
 }

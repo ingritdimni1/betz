@@ -9,9 +9,10 @@ use Illuminate\Support\Facades\DB;
 class CrudModel extends Model
 {
     use HasFactory;
-    static function readData($table, $where = NULL, $orderBy = NULL, $limit = NULL, $fields = '*')
+
+    public static function readData($table, $where = null, $orderBy = null, $limit = null, $fields = '*')
     {
-        //dd($limit);
+        // dd($limit);
         $query = DB::table($table)
             ->select($fields);
         if ($orderBy != '') {
@@ -27,48 +28,55 @@ class CrudModel extends Model
         } else {
             $result = $query->get();
         }
+
         return $result;
     }
 
-    static function createNewRecord($table, $insertArray)
+    public static function createNewRecord($table, $insertArray)
     {
         $insertedId = DB::table($table)->insertGetId($insertArray);
+
         return $insertedId;
     }
 
-    static function createRecordMultiple($table, $insertArray)
+    public static function createRecordMultiple($table, $insertArray)
     {
         $resilt = DB::table($table)->insert($insertArray);
+
         return $resilt;
     }
 
-    static function createOnDuplicateKey($table, $insertArray)
+    public static function createOnDuplicateKey($table, $insertArray)
     {
         $resilt = DB::table($table)->insertOnDuplicateKey($insertArray);
+
         return $resilt;
     }
 
-    static function updateRecord($table, $updateArray, $where)
+    public static function updateRecord($table, $updateArray, $where)
     {
         $result = DB::table($table)
             ->whereRaw($where)
             ->update($updateArray);
+
         return $result;
     }
 
-    static function deleteRecord($table, $where)
+    public static function deleteRecord($table, $where)
     {
         $result = DB::table($table)
             ->whereRaw($where)
             ->delete();
+
         return $result;
     }
 
-    static function count($table, $where)
+    public static function count($table, $where)
     {
         $result = DB::table($table)
             ->whereRaw($where)
             ->paginate(1);
+
         return $result->total();
     }
 }

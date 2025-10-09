@@ -2,8 +2,8 @@
 
 namespace VanguardLTE\Notifications;
 
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 
 class NewAnswer extends Notification
@@ -14,6 +14,7 @@ class NewAnswer extends Notification
      * @var string
      */
     public $answer;
+
     public $ticket;
 
     /**
@@ -46,15 +47,15 @@ class NewAnswer extends Notification
      */
     public function toMail($notifiable)
     {
-        $subject = "Ticket #". $this->answer->ticket_id ." Answered";
+        $subject = 'Ticket #'.$this->answer->ticket_id.' Answered';
 
-        //if( !$this->answer->user->hasRole('admin') ){
-            //$notifiable->email = setting('tickets_email');
-        //}
+        // if( !$this->answer->user->hasRole('admin') ){
+        // $notifiable->email = setting('tickets_email');
+        // }
 
         return (new MailMessage)
             ->subject($subject)
-            ->line(new HtmlString(view('emails.new-answer', ['answer' => $this->answer, 'ticket' =>  $this->ticket]))
+            ->line(new HtmlString(view('emails.new-answer', ['answer' => $this->answer, 'ticket' => $this->ticket]))
             );
 
     }

@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Games\RouletteClassicPTM
 {
     set_time_limit(5);
@@ -8,44 +9,34 @@ namespace VanguardLTE\Games\RouletteClassicPTM
         {
             function get_($request, $game)
             {
-                \DB::transaction(function() use ($request, $game)
-                {
-                    try
-                    {
+                \DB::transaction(function () use ($game) {
+                    try {
                         $userId = \Auth::id();
-                        if( $userId == null ) 
-                        {
+                        if ($userId == null) {
                             $response = '{"responseEvent":"error","responseType":"","serverResponse":"invalid login"}';
-                            exit( $response );
+                            exit($response);
                         }
                         $slotSettings = new SlotSettings($game, $userId);
-                        if( !$slotSettings->is_active() ) 
-                        {
+                        if (! $slotSettings->is_active()) {
                             $response = '{"responseEvent":"error","responseType":"","serverResponse":"Game is disabled"}';
-                            exit( $response );
+                            exit($response);
                         }
                         $postData = json_decode(trim(file_get_contents('php://input')), true);
                         $balanceInCents = sprintf('%01.2f', $slotSettings->GetBalance()) * 100;
                         $result_tmp = [];
-                        if( isset($postData['umid']) ) 
-                        {
+                        if (isset($postData['umid'])) {
                             $umid = $postData['umid'];
-                            if( isset($postData['ID']) ) 
-                            {
+                            if (isset($postData['ID'])) {
                                 $umid = $postData['ID'];
                             }
-                        }
-                        else
-                        {
-                            if( isset($postData['ID']) ) 
-                            {
+                        } else {
+                            if (isset($postData['ID'])) {
                                 $result_tmp[] = '3:::{"ID":18}';
-                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"' . $slotSettings->slotCurrency . '","balanceInCents":' . $balanceInCents . ',"deltaBalanceInCents":1},"ID":40085}';
+                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"'.$slotSettings->slotCurrency.'","balanceInCents":'.$balanceInCents.',"deltaBalanceInCents":1},"ID":40085}';
                             }
                             $umid = 0;
                         }
-                        if( $umid == '40063' ) 
-                        {
+                        if ($umid == '40063') {
                             $result_tmp = [];
                             $paysArr = [];
                             $paysArr['straight'] = 36;
@@ -79,75 +70,61 @@ namespace VanguardLTE\Games\RouletteClassicPTM
                             $bsArr['odd'] = 0;
                             $bsArr['even'] = 0;
                             $bank = $slotSettings->GetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : ''));
-                            for( $i = 0; $i <= 2000; $i++ ) 
-                            {
+                            for ($i = 0; $i <= 2000; $i++) {
                                 $randNumber = rand(0, 36);
                                 $wins = [];
                                 $totalWin = 0;
                                 $allbet = 0;
-                                foreach( $postData['bets'] as $key => $vl ) 
-                                {
+                                foreach ($postData['bets'] as $key => $vl) {
                                     $allbet += ($vl[1] / 100);
                                     $curNums = $slotSettings->GetNumbersByField($vl[0]);
-                                    if( $curNums[0] == 'straight' && $curNums[1][0] == '0' ) 
-                                    {
+                                    if ($curNums[0] == 'straight' && $curNums[1][0] == '0') {
                                         $bsArr['zero'] = 1;
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         $bsArr[$curNums[0]]++;
                                     }
-                                    if( in_array($randNumber, $curNums[1]) ) 
-                                    {
+                                    if (in_array($randNumber, $curNums[1])) {
                                         $curWin = $paysArr[$curNums[0]] * ($vl[1] / 100);
                                         $totalWin += $curWin;
                                     }
                                 }
-                                if( $totalWin <= $bank ) 
-                                {
+                                if ($totalWin <= $bank) {
                                     break;
                                 }
-                                if( $i > 1500 ) 
-                                {
-                                    $response = '{"responseEvent":"error","responseType":"' . $postData['slotEvent'] . '","serverResponse":"Bad Reel Strip"}';
-                                    exit( $response );
+                                if ($i > 1500) {
+                                    $response = '{"responseEvent":"error","responseType":"'.$postData['slotEvent'].'","serverResponse":"Bad Reel Strip"}';
+                                    exit($response);
                                 }
                             }
                             $bankSum = $allbet / 100 * $slotSettings->GetPercent();
-                            if( $bsArr['zero'] > 0 && ($bsArr['red'] > 0 && $bsArr['black'] > 0 || $bsArr['odd'] > 0 && $bsArr['even'] > 0 || $bsArr['high'] > 0 && $bsArr['low'] > 0 || $bsArr['twelve'] >= 3 || $bsArr['column'] >= 3 || $bsArr['straight'] >= 36) ) 
-                            {
+                            if ($bsArr['zero'] > 0 && ($bsArr['red'] > 0 && $bsArr['black'] > 0 || $bsArr['odd'] > 0 && $bsArr['even'] > 0 || $bsArr['high'] > 0 && $bsArr['low'] > 0 || $bsArr['twelve'] >= 3 || $bsArr['column'] >= 3 || $bsArr['straight'] >= 36)) {
                                 $slotSettings->SetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : ''), $allbet);
                                 $slotSettings->SetBalance(-1 * $allbet, 'bet');
-                            }
-                            else
-                            {
+                            } else {
                                 $slotSettings->SetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : ''), $bankSum, 'bet');
                                 $slotSettings->SetBalance(-1 * $allbet, 'bet');
                             }
-                            if( $totalWin > 0 ) 
-                            {
+                            if ($totalWin > 0) {
                                 $slotSettings->SetBank((isset($postData['slotEvent']) ? $postData['slotEvent'] : ''), -1 * $totalWin);
                                 $slotSettings->SetBalance($totalWin);
                             }
                             $balanceInCents = sprintf('%01.2f', $slotSettings->GetBalance()) * 100;
                             $result_tmp[] = '3:::{"data":{},"ID":40173,"umid":35}';
-                            foreach( $postData['bets'] as $key => $vl ) 
-                            {
+                            foreach ($postData['bets'] as $key => $vl) {
                                 $result_tmp[] = '3:::{"data":{"windowId":"m4Un7g"},"ID":40129,"umid":36}';
                             }
-                            $result_tmp[] = '3:::{"data":{"result":' . $randNumber . ',"credit":' . $balanceInCents . ',"windowId":"aelrii"},"ID":40111,"umid":36}';
-                            $response = '3:::{"data":{"result":' . $randNumber . ',"credit":' . $balanceInCents . ',"windowId":"aelrii"},"ID":40111,"umid":36}';
-                            $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"' . $slotSettings->slotCurrency . '","balanceInCents":' . $balanceInCents . ',"deltaBalanceInCents":1},"ID":40085}';
+                            $result_tmp[] = '3:::{"data":{"result":'.$randNumber.',"credit":'.$balanceInCents.',"windowId":"aelrii"},"ID":40111,"umid":36}';
+                            $response = '3:::{"data":{"result":'.$randNumber.',"credit":'.$balanceInCents.',"windowId":"aelrii"},"ID":40111,"umid":36}';
+                            $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"'.$slotSettings->slotCurrency.'","balanceInCents":'.$balanceInCents.',"deltaBalanceInCents":1},"ID":40085}';
                             $slotSettings->SaveLogReport($response, $allbet, 1, $totalWin, 'bet');
                         }
-                        switch( $umid ) 
-                        {
+                        switch ($umid) {
                             case '31031':
                                 $result_tmp[] = '3:::{"data":{"urlList":[{"urlType":"mobile_login","url":"https://login.loc/register","priority":1},{"urlType":"mobile_support","url":"https://ww2.loc/support","priority":1},{"urlType":"playerprofile","url":"","priority":1},{"urlType":"playerprofile","url":"","priority":10},{"urlType":"gambling_commission","url":"","priority":1},{"urlType":"cashier","url":"","priority":1},{"urlType":"cashier","url":"","priority":1}]},"ID":100}';
                                 break;
                             case '10001':
                                 $result_tmp[] = '3:::{"data":{"typeBalance":2,"balanceInCents":0},"ID":40083,"umid":3}';
-                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"' . $slotSettings->slotCurrency . '","balanceInCents":' . $balanceInCents . ',"deltaBalanceInCents":0},"ID":40083,"umid":4}';
+                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"'.$slotSettings->slotCurrency.'","balanceInCents":'.$balanceInCents.',"deltaBalanceInCents":0},"ID":40083,"umid":4}';
                                 $result_tmp[] = '3:::{"data":{"commandId":13218,"params":["0","null"]},"ID":50001,"umid":5}';
                                 $result_tmp[] = '3:::{"token":{"secretKey":"","currency":"USD","balance":0,"loginTime":""},"ID":10002,"umid":7}';
                                 break;
@@ -158,8 +135,8 @@ namespace VanguardLTE\Games\RouletteClassicPTM
                                 $result_tmp[] = '3:::{"data":{"commandId":13981,"params":["0","1"]},"ID":50001,"umid":12}';
                                 $result_tmp[] = '3:::{"data":{"commandId":14080,"params":["0","0"]},"ID":50001,"umid":14}';
                                 $result_tmp[] = '3:::{"data":{"keyValueCount":5,"elementsPerKey":1,"params":["10","1","11","500","12","1","13","0","14","0"]},"ID":40716,"umid":15}';
-                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"' . $slotSettings->slotCurrency . '","balanceInCents":' . $balanceInCents . ',"deltaBalanceInCents":0},"ID":40083,"umid":16}';
-                                $result_tmp[] = '3:::{"balanceInfo":{"clientType":"casino","totalBalance":' . $balanceInCents . ',"currency":"' . $slotSettings->slotCurrency . '","balanceChange":' . $balanceInCents . '},"ID":10006,"umid":17}';
+                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"'.$slotSettings->slotCurrency.'","balanceInCents":'.$balanceInCents.',"deltaBalanceInCents":0},"ID":40083,"umid":16}';
+                                $result_tmp[] = '3:::{"balanceInfo":{"clientType":"casino","totalBalance":'.$balanceInCents.',"currency":"'.$slotSettings->slotCurrency.'","balanceChange":'.$balanceInCents.'},"ID":10006,"umid":17}';
                                 $result_tmp[] = '3:::{"data":{},"ID":40292,"umid":18}';
                                 break;
                             case '10010':
@@ -169,65 +146,58 @@ namespace VanguardLTE\Games\RouletteClassicPTM
                             case '40024':
                                 $gameBets = $slotSettings->Bet;
                                 $gameBets0 = [];
-                                foreach( $gameBets as $vl ) 
-                                {
+                                foreach ($gameBets as $vl) {
                                     $bb = explode('=', $vl);
                                     $gameBets0[$bb[0]] = $bb[1] * 100;
                                 }
-                                $result_tmp[] = '3:::{"data":{"funNoticeGames":0,"funNoticePayouts":0,"gameGroup":"ro","minPosBet":0,"maxPosBet":0,"rouletteLimits":[{"tableLimitsName":"ro","infoAlternative":{"gameGroup":"ro","minBet":' . $gameBets0['minBet'] . ',"maxBet":' . $gameBets0['maxBet'] . ',"minPosBet":0,"maxPosBet":0},"limits":{"STRAIGHT_LIMIT":{"minBet":' . $gameBets0['minBetStraight'] . ',"maxBet":' . $gameBets0['maxBetStraight'] . '},"COLUMN_AND_DOZEN_LIMIT":{"minBet":' . $gameBets0['minBetColumnAndDozen'] . ',"maxBet":' . $gameBets0['maxBetColumnAndDozen'] . '},"FIFTY_FIFTY_LIMIT":{"minBet":' . $gameBets0['minBetFiftyFifty'] . ',"maxBet":' . $gameBets0['maxBetFiftyFifty'] . '},"TABLE_LIMIT":{"minBet":' . $gameBets0['minBetTable'] . ',"maxBet":' . $gameBets0['maxBetTable'] . '}}}]},"ID":40025,"umid":19}';
+                                $result_tmp[] = '3:::{"data":{"funNoticeGames":0,"funNoticePayouts":0,"gameGroup":"ro","minPosBet":0,"maxPosBet":0,"rouletteLimits":[{"tableLimitsName":"ro","infoAlternative":{"gameGroup":"ro","minBet":'.$gameBets0['minBet'].',"maxBet":'.$gameBets0['maxBet'].',"minPosBet":0,"maxPosBet":0},"limits":{"STRAIGHT_LIMIT":{"minBet":'.$gameBets0['minBetStraight'].',"maxBet":'.$gameBets0['maxBetStraight'].'},"COLUMN_AND_DOZEN_LIMIT":{"minBet":'.$gameBets0['minBetColumnAndDozen'].',"maxBet":'.$gameBets0['maxBetColumnAndDozen'].'},"FIFTY_FIFTY_LIMIT":{"minBet":'.$gameBets0['minBetFiftyFifty'].',"maxBet":'.$gameBets0['maxBetFiftyFifty'].'},"TABLE_LIMIT":{"minBet":'.$gameBets0['minBetTable'].',"maxBet":'.$gameBets0['maxBetTable'].'}}}]},"ID":40025,"umid":19}';
                                 break;
                             case '40036':
-                                $slotSettings->SetGameData($slotSettings->slotId . 'BonusWin', 0);
-                                $slotSettings->SetGameData($slotSettings->slotId . 'FreeGames', 0);
-                                $slotSettings->SetGameData($slotSettings->slotId . 'CurrentFreeGame', 0);
-                                $slotSettings->SetGameData($slotSettings->slotId . 'TotalWin', 0);
-                                $slotSettings->SetGameData($slotSettings->slotId . 'FreeBalance', 0);
+                                $slotSettings->SetGameData($slotSettings->slotId.'BonusWin', 0);
+                                $slotSettings->SetGameData($slotSettings->slotId.'FreeGames', 0);
+                                $slotSettings->SetGameData($slotSettings->slotId.'CurrentFreeGame', 0);
+                                $slotSettings->SetGameData($slotSettings->slotId.'TotalWin', 0);
+                                $slotSettings->SetGameData($slotSettings->slotId.'FreeBalance', 0);
                                 $slotSettings->SetGameData('RouletteClassicPTMBets', []);
                                 $lastEvent = $slotSettings->GetHistory();
-                                $slotSettings->SetGameData($slotSettings->slotId . 'brokenGames', '');
-                                $result_tmp[] = '3:::{"data":{"brokenGames":["' . $slotSettings->GetGameData($slotSettings->slotId . 'brokenGames') . '"],"windowId":"SuJLru"},"ID":40037,"umid":22}';
+                                $slotSettings->SetGameData($slotSettings->slotId.'brokenGames', '');
+                                $result_tmp[] = '3:::{"data":{"brokenGames":["'.$slotSettings->GetGameData($slotSettings->slotId.'brokenGames').'"],"windowId":"SuJLru"},"ID":40037,"umid":22}';
                                 break;
                             case '40020':
                                 $result_tmp[] = '3:::{"data":{"typeBalance":2,"balanceInCents":0},"ID":40085}';
                                 $result_tmp[] = '3:::{"data":{"typeBalance":1,"balanceInCents":0},"ID":40085}';
-                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"' . $slotSettings->slotCurrency . '","balanceInCents":' . $balanceInCents . ',"deltaBalanceInCents":0},"ID":40085}';
-                                $result_tmp[] = '3:::{"data":{"credit":' . $balanceInCents . ',"windowId":"SuJLru"},"ID":40026,"umid":28}';
+                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"'.$slotSettings->slotCurrency.'","balanceInCents":'.$balanceInCents.',"deltaBalanceInCents":0},"ID":40085}';
+                                $result_tmp[] = '3:::{"data":{"credit":'.$balanceInCents.',"windowId":"SuJLru"},"ID":40026,"umid":28}';
                                 break;
                             case '40050':
                                 $result_tmp[] = '3:::{"data":{"typeBalance":2,"balanceInCents":0},"ID":40085}';
                                 $result_tmp[] = '3:::{"data":{"typeBalance":1,"balanceInCents":0},"ID":40085}';
-                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"' . $slotSettings->slotCurrency . '","balanceInCents":' . $balanceInCents . ',"deltaBalanceInCents":0},"ID":40085}';
-                                $result_tmp[] = '3:::{"data":{"credit":' . $balanceInCents . ',"windowId":"SuJLru"},"ID":40026,"umid":28}';
+                                $result_tmp[] = '3:::{"data":{"typeBalance":0,"currency":"'.$slotSettings->slotCurrency.'","balanceInCents":'.$balanceInCents.',"deltaBalanceInCents":0},"ID":40085}';
+                                $result_tmp[] = '3:::{"data":{"credit":'.$balanceInCents.',"windowId":"SuJLru"},"ID":40026,"umid":28}';
                                 break;
                             case '48300':
-                                $result_tmp[] = '3:::{"balanceInfo":{"clientType":"casino","totalBalance":' . $balanceInCents . ',"currency":"' . $slotSettings->slotCurrency . '","balanceChange":0},"ID":10006,"umid":30}';
+                                $result_tmp[] = '3:::{"balanceInfo":{"clientType":"casino","totalBalance":'.$balanceInCents.',"currency":"'.$slotSettings->slotCurrency.'","balanceChange":0},"ID":10006,"umid":30}';
                                 $result_tmp[] = '3:::{"data":{"waitingLogins":[],"waitingAlerts":[],"waitingDialogs":[],"waitingDialogMessages":[],"waitingToasterMessages":[]},"ID":48301,"umid":31}';
                                 break;
                         }
                         $response = implode('------', $result_tmp);
                         $slotSettings->SaveGameData();
                         echo $response;
-                    }
-                    catch( \Exception $e ) 
-                    {
-                        if( isset($slotSettings) ) 
-                        {
+                    } catch (\Exception $e) {
+                        if (isset($slotSettings)) {
                             $slotSettings->InternalErrorSilent($e);
-                        }
-                        else
-                        {
+                        } else {
                             $strLog = '';
                             $strLog .= "\n";
-                            $strLog .= ('{"responseEvent":"error","responseType":"' . $e . '","serverResponse":"InternalError","request":' . json_encode($_REQUEST) . ',"requestRaw":' . file_get_contents('php://input') . '}');
+                            $strLog .= ('{"responseEvent":"error","responseType":"'.$e.'","serverResponse":"InternalError","request":'.json_encode($_REQUEST).',"requestRaw":'.file_get_contents('php://input').'}');
                             $strLog .= "\n";
                             $strLog .= ' ############################################### ';
                             $strLog .= "\n";
                             $slg = '';
-                            if( file_exists(storage_path('logs/') . 'GameInternal.log') ) 
-                            {
-                                $slg = file_get_contents(storage_path('logs/') . 'GameInternal.log');
+                            if (file_exists(storage_path('logs/').'GameInternal.log')) {
+                                $slg = file_get_contents(storage_path('logs/').'GameInternal.log');
                             }
-                            file_put_contents(storage_path('logs/') . 'GameInternal.log', $slg . $strLog);
+                            file_put_contents(storage_path('logs/').'GameInternal.log', $slg.$strLog);
                         }
                     }
                 }, 5);

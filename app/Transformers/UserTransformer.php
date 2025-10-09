@@ -3,8 +3,6 @@
 namespace VanguardLTE\Transformers;
 
 use League\Fractal\TransformerAbstract;
-use VanguardLTE\Repositories\Country\CountryRepository;
-use VanguardLTE\Repositories\Role\RoleRepository;
 use VanguardLTE\User;
 
 class UserTransformer extends TransformerAbstract
@@ -16,7 +14,7 @@ class UserTransformer extends TransformerAbstract
         return [
             'id' => $user->id,
             'username' => $user->username,
-			'balance' => $user->balance,
+            'balance' => $user->balance,
             'total_in' => $user->total_in,
             'total_out' => $user->total_out,
             'refunds' => $user->refunds,
@@ -26,7 +24,7 @@ class UserTransformer extends TransformerAbstract
             'currency' => $user->shop ? $user->shop->currency : '',
             'last_login' => (string) $user->last_login,
             'created_at' => (string) $user->created_at,
-            'updated_at' => (string) $user->updated_at
+            'updated_at' => (string) $user->updated_at,
         ];
     }
 
@@ -36,7 +34,6 @@ class UserTransformer extends TransformerAbstract
             return null;
         }
 
-		
         return $this->item($user->role, new RoleTransformer);
     }
 

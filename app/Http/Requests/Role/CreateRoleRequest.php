@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace VanguardLTE\Http\Requests\Role
 {
     class CreateRoleRequest extends \VanguardLTE\Http\Requests\Request

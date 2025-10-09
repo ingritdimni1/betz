@@ -16,7 +16,7 @@ trait AuthorizationUserTrait
 
     /**
      * Check if user has specified role.
-     * @param $role
+     *
      * @return bool
      */
     public function hasRole($role)
@@ -26,8 +26,8 @@ trait AuthorizationUserTrait
 
     /**
      * Check if user can perform some action.
-     * @param $permission
-     * @param bool $allRequired
+     *
+     * @param  bool  $allRequired
      * @return bool
      */
     public function hasPermission($permission, $allRequired = true)
@@ -43,7 +43,6 @@ trait AuthorizationUserTrait
      * Check if user has all provided permissions
      * (translates to AND logic between permissions).
      *
-     * @param array $permissions
      * @return bool
      */
     private function hasAllPermissions(array $permissions)
@@ -63,7 +62,6 @@ trait AuthorizationUserTrait
      * Check if user has at least one of provided permissions
      * (translates to OR logic between permissions).
      *
-     * @param array $permissions
      * @return bool
      */
     private function hasAtLeastOnePermission(array $permissions)
@@ -81,13 +79,14 @@ trait AuthorizationUserTrait
 
     /**
      * Set user's role.
-     * @param Role $role
+     *
+     * @param  Role  $role
      * @return mixed
      */
     public function setRole($role)
     {
         return $this->forceFill([
-            'role_id' => $role instanceof Role ? $role->id : $role
+            'role_id' => $role instanceof Role ? $role->id : $role,
         ])->save();
     }
 }

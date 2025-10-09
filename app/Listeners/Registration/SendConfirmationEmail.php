@@ -21,7 +21,6 @@ class SendConfirmationEmail
     /**
      * Handle the event.
      *
-     * @param  Registered  $event
      * @return void
      */
     public function handle(Registered $event)
@@ -34,7 +33,7 @@ class SendConfirmationEmail
 
         $token = str_random(60);
         $this->users->update($user->id, [
-            'confirmation_token' => $token
+            'confirmation_token' => $token,
         ]);
 
         $user->notify(new EmailConfirmation($token));

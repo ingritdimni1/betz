@@ -3,10 +3,10 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class CoinpaymentListener implements ShouldQueue
 {
@@ -19,7 +19,8 @@ class CoinpaymentListener implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($transaction) {
+    public function __construct($transaction)
+    {
         $this->transaction = $transaction;
     }
 
@@ -28,12 +29,13 @@ class CoinpaymentListener implements ShouldQueue
      *
      * @return void
      */
-    public function handle() {
-        
+    public function handle()
+    {
+
         /**
          * Handle your transaction here
          * the parameter is :
-         * 
+         *
             'address',
             'amount',
             'amountf',
@@ -61,10 +63,9 @@ class CoinpaymentListener implements ShouldQueue
          * ----------------------------------------------------
          *  You can use transaction_type to distinguish new transactions or old transactions
          * ----------------------------------------------------
-         * 
+         *
          * Example
             $this->transaction['transaction_type']
          */
-
     }
 }

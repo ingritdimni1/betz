@@ -10,6 +10,7 @@ class MoneyOut
      * @var User
      */
     protected $user;
+
     protected $sum;
 
     public function __construct(User $user, $sum)

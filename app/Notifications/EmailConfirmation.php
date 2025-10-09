@@ -2,8 +2,8 @@
 
 namespace VanguardLTE\Notifications;
 
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class EmailConfirmation extends Notification
 {
@@ -43,7 +43,8 @@ class EmailConfirmation extends Notification
      */
     public function toMail()
     {
-        $subject = sprintf("%s - %s", settings('app_name'), trans('app.registration_confirmation'));
+        $subject = sprintf('%s - %s', settings('app_name'), trans('app.registration_confirmation'));
+
         /*
         if( settings('use_email') ){
             return (new MailMessage)
@@ -53,15 +54,14 @@ class EmailConfirmation extends Notification
                 ->action(trans('app.confirm_email'), route('frontend.register.confirm-email', $this->token));
         } else{
             */
-            return (new MailMessage)
-                ->subject($subject)
-                ->line(trans('app.thank_you_for_registering', ['app' => settings('app_name')]))
-                ->line(trans('app.confirm_email_on_link_below'))
-                ->action(trans('app.confirm_email'), route('frontend.register.confirm-email', $this->token));
-                //->line(trans('app.confirm_email') . ': ' . $this->token);
-            //->action(trans('app.confirm_email'), route('frontend.register.confirm-email', $this->token));
-        //}
+        return (new MailMessage)
+            ->subject($subject)
+            ->line(trans('app.thank_you_for_registering', ['app' => settings('app_name')]))
+            ->line(trans('app.confirm_email_on_link_below'))
+            ->action(trans('app.confirm_email'), route('frontend.register.confirm-email', $this->token));
+        // ->line(trans('app.confirm_email') . ': ' . $this->token);
+        // ->action(trans('app.confirm_email'), route('frontend.register.confirm-email', $this->token));
+        // }
 
-			
     }
 }
