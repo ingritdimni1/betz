@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>Login - Admin</title>
+    <link rel="stylesheet" type="text/css" href="/frontend/Tropicoblack/assets/vendors/google/css/roboto.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="/frontend/Tropicoblack/assets/vendors/bootstrap/4.3.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/frontend/Tropicoblack/assets/vendors/swiper/4.5.0/css/swiper.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="/frontend/Tropicoblack/assets/vendors/odometer/0.4.6/css/odometer-theme-default.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="/frontend/Tropicoblack/assets/vendors/malihu-custom-scrollbar-plugin/3.15/css/jquery.mCustomScrollbar.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="/frontend/Tropicoblack/assets/vendors/bootstrap-select/1.13.9/css/bootstrap-select.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="/frontend/Tropicoblack/assets/vendors/flag-icon-css/3.3.0/css/flag-icon.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/frontend/Tropicoblack/assets/vendors/flaticon/flaticon.css"/>
+    <link rel="stylesheet" type="text/css" href="/frontend/Tropicoblack/assets/vendors/fontawesome/5.10.1/css/all.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/frontend/Tropicoblack/assets/css/main-blue.css"/>
+    <!-- <link rel="stylesheet" type="text/css" href="./assets/css/main-black.css" /> -->
+    <!-- <link rel="stylesheet" type="text/css" href="./assets/css/main-gray.css" /> -->
+    <!-- <link rel="stylesheet" type="text/css" href="./assets/css/main-red.css" /> -->
+    <!-- <link rel="stylesheet" type="text/css" href="./assets/css/main-white.css" /> -->
+</head>
+@extends('backend.layouts.auth')
+
+@section('page-title', trans('app.login'))
+
+@section('content')
+<body data-type="public">
+   @include('backend.partials.messages')
+	   
+	   
+	  <div class="container d-flex h-100">
+    <div class="card w-100 border-0 m-auto" id="login-card">
+        <div class="card-body p-3"> 
+ <form id="login-form" action="<?= route('frontend.auth.login.post') ?>" method="POST"  autocomplete="off">
+   <input type="hidden" name="_token" value="xQGxme3KFAtyu3JLzadyOouaoBgG00WqFgErOraA">               <div class="custom-input-group mb-2">
+                    <span class="custom-input-group-icon"><i class="fas fa-user"></i></span>
+                    <input id="login-form-username" value="" type="text" name="username" placeholder="Username"/>
+
+                </div>
+                                                <div class="custom-input-group mb-2">
+                    <span class="custom-input-group-icon"><i class="fas fa-key"></i></span>
+                    <input id="login-form-password" type="password" name="password" placeholder="Password"/>
+                </div>
+                                <button type="submit" form="login-form" value="Log In" class="btn primary-btn w-100 mt-4">
+                    Log In
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+</div>
+@stop
+
+@section('scripts')
+  {!! JsValidator::formRequest('VanguardLTE\Http\Requests\Auth\LoginRequest', '#login-form') !!}
+@stop
+	   
+
+<script src="/frontend/Tropicoblack/assets/vendors/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+<script src="/frontend/Tropicoblack/assets/vendors/popper/1.14.7/popper.min.js"></script>
+<script src="/frontend/Tropicoblack/assets/vendors/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="/frontend/Tropicoblack/assets/vendors/swiper/4.5.0/js/swiper.min.js"></script>
+<script src="/frontend/Tropicoblack/assets/vendors/odometer/0.4.6/js/odometer.min.js"></script>
+<script src="/frontend/Tropicoblack/assets/vendors/malihu-custom-scrollbar-plugin/3.15/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="/frontend/Tropicoblack/assets/vendors/bootstrap-select/1.13.9/js/bootstrap-select.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,1 @@
+En socket_config (todos) reemplace ws por wss

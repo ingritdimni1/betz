@@ -1,0 +1,77 @@
+{
+    "name": "loshmis/vanguard",
+    "description": "Advanced PHP Login and User Management",
+    "keywords": ["advanced", "secure", "login", "user management", "authentication", "authorization", "register"],
+    "type": "project",
+    "repositories": [],
+    "require": {
+        "php": "^8.0|^8.1|^8.2|^8.3",
+        "anlutro/l4-settings": "^1.0",
+        "bacon/bacon-qr-code": "^2.0",
+        "barryvdh/laravel-debugbar": "^3.6",
+        "geoip2/geoip2": "^2.12",
+        "guzzlehttp/guzzle": "^7.4",
+        "intervention/image": "^2.7",
+        "jenssegers/agent": "^2.6",
+        "jeremykenedy/laravel-roles": "^8.0",
+        "laracasts/presenter": "^0.2.6",
+        "laravel/framework": "^9.0",
+        "laravel/tinker": "^2.7",
+        "laravelcollective/html": "^6.3",
+        "league/fractal": "^0.20.1",
+        "mobiledetect/mobiledetectlib": "^2.8",
+        "pragmarx/google2fa-laravel": "^1.4",
+        "predis/predis": "^1.1|^2.0",
+        "proengsoft/laravel-jsvalidation": "^4.7",
+        "spatie/db-dumper": "^3.3",
+        "tymon/jwt-auth": "^2.0",
+        "yajra/laravel-datatables-oracle": "^9.21"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.20",
+        "mockery/mockery": "^1.5",
+        "nunomaduro/collision": "^6.4",
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "classmap": [
+            "database/seeds",
+            "database/factories"
+        ],
+        "psr-4": {
+            "VanguardLTE\\": "app/"
+        },
+        "files": [
+            "app/Support/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": [
+            ]
+        }
+    },
+    "scripts": {
+        "post-root-package-install": [
+            "@php -r \"copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate"
+        ],
+
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover"
+        ]
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    }
+}
