@@ -1,2 +1,4 @@
 
 /public/build
+# Ignore composer vendor dir
+vendor/
