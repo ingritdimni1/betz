@@ -251,8 +251,8 @@ return [
 
         'JsValidator' => App\Compat\JsValidator::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
-        'Form' => Spatie\Html\Facades\Html::class,
-        'HTML' => Spatie\Html\Facades\Html::class,
+                'Form' => App\Compat\Form::class,
+                'HTML' => App\Compat\Html::class,
         'Image' => Intervention\Image\Facades\Image::class,
         'Settings' => anlutro\LaravelSettings\Facade::class,
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
