@@ -249,6 +249,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Notification' => Illuminate\Support\Facades\Notification::class,
 
+        'JsValidator' => App\Compat\JsValidator::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'Form' => Spatie\Html\Facades\Html::class,
         'HTML' => Spatie\Html\Facades\Html::class,
