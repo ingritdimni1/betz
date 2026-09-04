@@ -28,3 +28,6 @@ jobs:
 
       - name: Check Laravel version
         run: php artisan --version || true
+
+      - name: List routes (smoke test)
+        run: php artisan route:list --no-ansi || true
