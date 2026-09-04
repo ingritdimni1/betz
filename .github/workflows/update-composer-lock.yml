@@ -1,0 +1,47 @@
+name: Refresh Composer lock on PHP 8.3
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  refresh-lock:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, bcmath
+
+      - name: Install Composer
+        run: php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; php composer-setup.php --install-dir=/usr/local/bin --filename=composer; php -r "unlink('composer-setup.php');"
+
+      - name: Prepare storage and cache directories
+        run: |
+          mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache
+          chmod -R 0777 storage bootstrap/cache || true
+
+      - name: Update Composer dependencies (no dev)
+        run: composer update --with-all-dependencies --no-dev --no-interaction --prefer-dist
+
+      - name: Commit lock file if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add composer.lock composer.json || true
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: refresh composer.lock for Laravel 12 compatibility [ci skip]" || true
+            git push
+          else
+            echo "No lock changes"
+          fi

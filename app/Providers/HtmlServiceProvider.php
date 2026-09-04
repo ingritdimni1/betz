@@ -2,35 +2,23 @@
 
 namespace VanguardLTE\Providers;
 
-use Collective\Html\FormBuilder;
-use Collective\Html\HtmlBuilder;
-use Collective\Html\HtmlServiceProvider as BaseHtmlServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
-class HtmlServiceProvider extends BaseHtmlServiceProvider
+class HtmlServiceProvider extends ServiceProvider
 {
-    protected function registerHtmlBuilder()
+    /**
+     * Register any application services.
+     */
+    public function register()
     {
-        $this->app->singleton('html', function ($app) {
-
-            /*          if (env('FORCE_SSL')) {
-                         $app['url']->forceScheme('https');
-                     }
-
-  */ return new HtmlBuilder($app['url'], $app['view']);
-        });
+        // Intentionally left blank. Using App\Compat shims and Spatie Html provider for HTML/Form helpers.
     }
 
-    protected function registerFormBuilder()
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot()
     {
-        $this->app->singleton('form', function ($app) {
-
-            /*             if (env('FORCE_SSL')) {
-                            $app['url']->forceScheme('https');
-                        } */
-
-            $form = new FormBuilder($app['html'], $app['url'], $app['view'], $app['session.store']->token());
-
-            return $form->setSessionStore($app['session.store']);
-        });
+        // No-op
     }
 }
