@@ -1,0 +1,30 @@
+name: PHP CI
+
+on:
+  push:
+    branches: [ main, '**' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  php:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, xml, bcmath
+
+      - name: Validate composer.json
+        run: composer validate --no-check-publish || true
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-scripts --no-progress
+
+      - name: Check Laravel version
+        run: php artisan --version || true

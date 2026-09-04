@@ -23,7 +23,7 @@
         "jenssegers/agent": "^2.6",
         "jeremykenedy/laravel-roles": "^8.0",
         "laracasts/presenter": "^0.2.6",
-        "laravel/framework": "^9.19",
+        "laravel/framework": "^10.0",
         "laravel/tinker": "^2.7",
         "laravelcollective/html": "^6.3",
         "league/fractal": "^0.20.1",
