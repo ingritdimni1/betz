@@ -176,8 +176,7 @@ return [
         /**
          * Third-Party Service Providers
          */
-        Proengsoft\JsValidation\JsValidationServiceProvider::class,
-        VanguardLTE\Providers\HtmlServiceProvider::class,
+        Spatie\Html\HtmlServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
         // anlutro\LaravelSettings\ServiceProvider::class,
         Jenssegers\Agent\AgentServiceProvider::class,
@@ -250,10 +249,9 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Notification' => Illuminate\Support\Facades\Notification::class,
 
-        'JsValidator' => Proengsoft\JsValidation\Facades\JsValidatorFacade::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
-        'Form' => Collective\Html\FormFacade::class,
-        'HTML' => Collective\Html\HtmlFacade::class,
+        'Form' => Spatie\Html\Facades\Html::class,
+        'HTML' => Spatie\Html\Facades\Html::class,
         'Image' => Intervention\Image\Facades\Image::class,
         'Settings' => anlutro\LaravelSettings\Facade::class,
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
